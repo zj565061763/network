@@ -5,6 +5,10 @@
 # Sample
 
 ```kotlin
+val isNetworkAvailable = FNetworkObserver.isNetworkAvailable()
+```
+
+```kotlin
 private val networkObserver = object : FNetworkObserver() {
     override fun onAvailable() {
         // network available
