@@ -38,10 +38,11 @@ internal abstract class NetworkObserver(
     private val onLost: () -> Unit,
 ) {
     private val _register = AtomicBoolean()
-    private var _isNetworkAvailable = libIsNetworkAvailable(context)
+    private var _isNetworkAvailable: Boolean? = null
 
     fun register(): Boolean {
         if (_register.compareAndSet(false, true)) {
+            _isNetworkAvailable = libIsNetworkAvailable(context)
             registerImpl()
             return true
         }
@@ -51,6 +52,7 @@ internal abstract class NetworkObserver(
     fun unregister() {
         if (_register.compareAndSet(true, false)) {
             unregisterImpl()
+            _isNetworkAvailable = null
         }
     }
 
@@ -58,7 +60,9 @@ internal abstract class NetworkObserver(
         if (!_register.get()) return
         Handler(Looper.getMainLooper()).post {
             if (_register.get()) {
-                if (_isNetworkAvailable) onAvailable() else onLost()
+                _isNetworkAvailable?.let { isAvailable ->
+                    if (isAvailable) onAvailable() else onLost()
+                }
             }
         }
     }
