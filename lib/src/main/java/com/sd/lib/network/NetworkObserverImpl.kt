@@ -38,6 +38,8 @@ internal abstract class NetworkObserver(
     private val onLost: () -> Unit,
 ) {
     private val _register = AtomicBoolean()
+
+    @Volatile
     private var _isNetworkAvailable: Boolean? = null
 
     fun register(): Boolean {
