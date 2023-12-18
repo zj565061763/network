@@ -36,6 +36,9 @@ abstract class FNetworkObserver {
     abstract fun onLost()
 
     companion object {
+        /**
+         * 网络是否可用
+         */
         @JvmStatic
         fun isNetworkAvailable(): Boolean {
             return libIsNetworkAvailable(fContext)
