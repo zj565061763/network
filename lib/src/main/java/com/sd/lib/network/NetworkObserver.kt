@@ -12,10 +12,15 @@ abstract class FNetworkObserver {
 
     /**
      * 注册
+     * @param notify 注册之后是否立即通知一次回调，默认true
      */
-    fun register() {
-        _observer.register()
-        _observer.notifyCallback()
+    @JvmOverloads
+    fun register(notify: Boolean = true) {
+        if (_observer.register()) {
+            if (notify) {
+                _observer.notifyCallback()
+            }
+        }
     }
 
     /**

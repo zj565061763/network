@@ -38,10 +38,12 @@ internal abstract class NetworkObserver(
     private val _register = AtomicBoolean()
     private var _isNetworkAvailable = libIsNetworkAvailable(context)
 
-    fun register() {
+    fun register(): Boolean {
         if (_register.compareAndSet(false, true)) {
             registerImpl()
+            return true
         }
+        return false
     }
 
     fun unregister() {
