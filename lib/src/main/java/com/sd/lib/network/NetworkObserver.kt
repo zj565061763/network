@@ -63,6 +63,7 @@ val fIsNetworkAvailable: Boolean get() = FNetworkObserver.isNetworkAvailable()
 suspend fun fAwaitNetworkAvailable() {
     if (fIsNetworkAvailable) return
     return suspendCancellableCoroutine { cont ->
+
         val observer = object : FNetworkObserver() {
             override fun onAvailable() {
                 unregister()
@@ -76,6 +77,8 @@ suspend fun fAwaitNetworkAvailable() {
             observer.unregister()
         }
 
-        observer.register()
+        if (cont.isActive) {
+            observer.register()
+        }
     }
 }

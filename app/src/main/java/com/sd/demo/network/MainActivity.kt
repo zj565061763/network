@@ -45,7 +45,14 @@ class MainActivity : AppCompatActivity() {
     private suspend fun launchNetWorkAvailable() {
         val uuid = UUID.randomUUID().toString()
         logMsg { "start $uuid" }
-        fAwaitNetworkAvailable()
+
+        try {
+            fAwaitNetworkAvailable()
+        } catch (e: Exception) {
+            logMsg { "exception $uuid $e" }
+            throw e
+        }
+
         logMsg { "finish $uuid" }
     }
 
