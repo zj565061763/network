@@ -6,6 +6,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 abstract class FNetworkObserver {
 
     private val _observer = networkObserver(
+        context = fContext,
         onAvailable = { this@FNetworkObserver.onAvailable() },
         onLost = { this@FNetworkObserver.onLost() },
     )

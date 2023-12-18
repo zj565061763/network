@@ -10,20 +10,22 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import com.sd.lib.ctx.fContext
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal fun networkObserver(
+    context: Context,
     onAvailable: () -> Unit,
     onLost: () -> Unit,
 ): NetworkObserver {
     return if (Build.VERSION.SDK_INT >= 24) {
         NewObserver(
+            context = context,
             onAvailable = onAvailable,
             onLost = onLost,
         )
     } else {
         OldObserver(
+            context = context,
             onAvailable = onAvailable,
             onLost = onLost,
         )
@@ -31,7 +33,7 @@ internal fun networkObserver(
 }
 
 internal abstract class NetworkObserver(
-    protected val context: Context = fContext,
+    protected val context: Context,
     private val onAvailable: () -> Unit,
     private val onLost: () -> Unit,
 ) {
@@ -75,9 +77,11 @@ internal abstract class NetworkObserver(
 }
 
 private class NewObserver(
+    context: Context,
     onAvailable: () -> Unit,
     onLost: () -> Unit,
 ) : NetworkObserver(
+    context = context,
     onAvailable = onAvailable,
     onLost = onLost,
 ) {
@@ -107,9 +111,11 @@ private class NewObserver(
 }
 
 private class OldObserver(
+    context: Context,
     onAvailable: () -> Unit,
     onLost: () -> Unit,
 ) : NetworkObserver(
+    context = context,
     onAvailable = onAvailable,
     onLost = onLost,
 ) {
