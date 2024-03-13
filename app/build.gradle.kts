@@ -7,7 +7,7 @@ android {
     namespace = "com.sd.demo.network"
     compileSdk = libs.versions.androidCompileSdk.get().toInt()
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = libs.versions.androidTargetSdk.get().toInt()
         applicationId = "com.sd.demo.network"
         versionCode = 1

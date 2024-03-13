@@ -147,17 +147,13 @@ private class OldObserver(
 
 internal fun libIsNetworkAvailable(context: Context): Boolean {
     val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    if (Build.VERSION.SDK_INT >= 23) {
-        val network = manager.activeNetwork ?: return false
-        val capabilities = manager.getNetworkCapabilities(network) ?: return false
-        return when {
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
-            else -> false
-        }
-    } else {
-        return manager.activeNetworkInfo?.isConnected ?: return false
+    val network = manager.activeNetwork ?: return false
+    val capabilities = manager.getNetworkCapabilities(network) ?: return false
+    return when {
+        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
+        else -> false
     }
 }
