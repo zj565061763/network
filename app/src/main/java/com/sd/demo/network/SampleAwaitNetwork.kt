@@ -2,31 +2,26 @@ package com.sd.demo.network
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.sd.demo.network.databinding.SampleAwaitNetworkBinding
+import com.sd.lib.coroutine.FScope
 import com.sd.lib.network.fAwaitNetworkAvailable
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import java.util.UUID
 
 class SampleAwaitNetwork : AppCompatActivity() {
     private val _binding by lazy { SampleAwaitNetworkBinding.inflate(layoutInflater) }
 
-    private var _jobs = mutableListOf<Job>()
+    private val _scope = FScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
         _binding.btnLaunch.setOnClickListener {
-            lifecycleScope.launch {
+            _scope.launch {
                 launchNetWorkAvailable()
-            }.also {
-                _jobs.add(it)
             }
         }
         _binding.btnCancel.setOnClickListener {
-            _jobs.forEach { it.cancel() }
-            _jobs.clear()
+            _scope.cancel()
         }
     }
 
@@ -42,5 +37,10 @@ class SampleAwaitNetwork : AppCompatActivity() {
         }
 
         logMsg { "finish $uuid" }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _scope.cancel()
     }
 }

@@ -39,6 +39,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.viewmodel)
 
+    implementation(libs.sd.coroutine)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
