@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 internal fun networkObserver(
     context: Context,
@@ -33,44 +34,39 @@ internal abstract class NetworkObserver(
     protected val context: Context,
     private val onChange: (isAvailable: Boolean) -> Unit,
 ) {
-    private val _register = AtomicBoolean()
+    private val _register = AtomicBoolean(false)
+    private val _isAvailable = AtomicReference<Boolean?>(null)
 
-    @Volatile
-    private var _isNetworkAvailable: Boolean? = null
-
-    fun register(): Boolean {
-        return if (_register.compareAndSet(false, true)) {
-            _isNetworkAvailable = libIsNetworkAvailable(context)
+    fun register(notify: Boolean) {
+        if (_register.compareAndSet(false, true)) {
+            val isAvailable = libIsNetworkAvailable(context)
+            _isAvailable.set(isAvailable)
             registerImpl()
-            true
-        } else {
-            false
+            if (notify) notifyCallback(isAvailable)
         }
     }
 
     fun unregister() {
         if (_register.compareAndSet(true, false)) {
             unregisterImpl()
-            _isNetworkAvailable = null
-        }
-    }
-
-    fun notifyCallback() {
-        if (!_register.get()) return
-        Handler(Looper.getMainLooper()).post {
-            if (_register.get()) {
-                _isNetworkAvailable?.let { isAvailable ->
-                    onChange(isAvailable)
-                }
-            }
+            _isAvailable.set(null)
         }
     }
 
     protected fun notifyNetworkAvailable(isAvailable: Boolean) {
         if (!_register.get()) return
-        if (_isNetworkAvailable != isAvailable) {
-            _isNetworkAvailable = isAvailable
-            notifyCallback()
+        val oldValue = _isAvailable.getAndSet(isAvailable)
+        if (oldValue != isAvailable) {
+            notifyCallback(isAvailable)
+        }
+    }
+
+    private fun notifyCallback(isAvailable: Boolean) {
+        if (!_register.get()) return
+        Handler(Looper.getMainLooper()).post {
+            if (_register.get()) {
+                onChange(isAvailable)
+            }
         }
     }
 
