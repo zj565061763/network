@@ -1,13 +1,13 @@
 package com.sd.lib.network
 
-import com.sd.lib.ctx.fContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 
 abstract class FNetworkObserver {
-
-    private val _observer = networkObserver(
-        context = fContext,
-        onChange = { onChange(it) },
-    )
+    private val _scope = MainScope()
+    private var _job: Job? = null
 
     /**
      * 注册
@@ -15,14 +15,24 @@ abstract class FNetworkObserver {
      */
     @JvmOverloads
     fun register(notify: Boolean = true) {
-        _observer.register(notify = notify)
+        synchronized(this@FNetworkObserver) {
+            _job?.let { return }
+            _job = _scope.launch {
+                fIsNetworkAvailableFlow
+                    .let { if (notify) it else it.drop(1) }
+                    .collect { onChange(it) }
+            }
+        }
     }
 
     /**
      * 取消注册
      */
     fun unregister() {
-        _observer.unregister()
+        synchronized(this@FNetworkObserver) {
+            _job?.cancel()
+            _job = null
+        }
     }
 
     /**
@@ -36,8 +46,6 @@ abstract class FNetworkObserver {
          * 网络是否可用
          */
         @JvmStatic
-        fun isNetworkAvailable(): Boolean {
-            return libIsNetworkAvailable(fContext)
-        }
+        fun isNetworkAvailable(): Boolean = fIsNetworkAvailable
     }
 }

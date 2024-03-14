@@ -10,46 +10,60 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import com.sd.lib.ctx.fContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
 
-internal fun networkObserver(
-    context: Context,
+/** 网络是否可用 */
+val fIsNetworkAvailable: Boolean
+    get() = libIsNetworkAvailable(fContext)
+
+/** 网络是否可用 */
+val fIsNetworkAvailableFlow: StateFlow<Boolean>
+    get() = NetworkObserverHolder.isNetworkAvailable
+
+private object NetworkObserverHolder {
+    private val _observer: NetworkObserver = networkObserver { _isNetworkAvailable.value = it }
+    private val _isNetworkAvailable: MutableStateFlow<Boolean> = MutableStateFlow(_observer.register(fContext))
+    val isNetworkAvailable: StateFlow<Boolean> = _isNetworkAvailable.asStateFlow()
+}
+
+private fun networkObserver(
     onChange: (isAvailable: Boolean) -> Unit,
 ): NetworkObserver {
     return if (Build.VERSION.SDK_INT >= 24) {
-        NewObserver(
-            context = context,
-            onChange = onChange,
-        )
+        NewObserver(onChange)
     } else {
-        OldObserver(
-            context = context,
-            onChange = onChange,
-        )
+        OldObserver(onChange)
     }
 }
 
-internal abstract class NetworkObserver(
-    protected val context: Context,
+private abstract class NetworkObserver(
     private val onChange: (isAvailable: Boolean) -> Unit,
 ) {
     private val _register = AtomicBoolean(false)
-    private val _isAvailable = AtomicReference<Boolean?>(null)
+    private val _isAvailable = AtomicBoolean(false)
 
-    fun register(notify: Boolean) {
+    /**
+     * 注册观察者，返回网络是否可用
+     */
+    fun register(context: Context): Boolean {
         if (_register.compareAndSet(false, true)) {
-            val isAvailable = libIsNetworkAvailable(context)
-            _isAvailable.set(isAvailable)
-            registerImpl()
-            if (notify) notifyCallback(isAvailable)
+            _isAvailable.set(libIsNetworkAvailable(context))
+            registerImpl(context)
         }
+        return _isAvailable.get()
     }
 
-    fun unregister() {
+    /**
+     * 取消注册观察者
+     */
+    fun unregister(context: Context) {
         if (_register.compareAndSet(true, false)) {
-            unregisterImpl()
-            _isAvailable.set(null)
+            unregisterImpl(context)
+            _isAvailable.set(false)
         }
     }
 
@@ -70,18 +84,14 @@ internal abstract class NetworkObserver(
         }
     }
 
-    protected abstract fun registerImpl()
+    protected abstract fun registerImpl(context: Context)
 
-    protected abstract fun unregisterImpl()
+    protected abstract fun unregisterImpl(context: Context)
 }
 
 private class NewObserver(
-    context: Context,
     onChange: (isAvailable: Boolean) -> Unit,
-) : NetworkObserver(
-    context = context,
-    onChange = onChange,
-) {
+) : NetworkObserver(onChange) {
     private val _observer = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
@@ -94,26 +104,22 @@ private class NewObserver(
         }
     }
 
-    override fun registerImpl() {
+    override fun registerImpl(context: Context) {
         if (Build.VERSION.SDK_INT >= 24) {
             val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             manager.registerDefaultNetworkCallback(_observer)
         }
     }
 
-    override fun unregisterImpl() {
+    override fun unregisterImpl(context: Context) {
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         manager.unregisterNetworkCallback(_observer)
     }
 }
 
 private class OldObserver(
-    context: Context,
     onChange: (isAvailable: Boolean) -> Unit,
-) : NetworkObserver(
-    context = context,
-    onChange = onChange,
-) {
+) : NetworkObserver(onChange) {
     private val _observer = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (ConnectivityManager.CONNECTIVITY_ACTION == intent.action) {
@@ -122,19 +128,19 @@ private class OldObserver(
         }
     }
 
-    override fun registerImpl() {
+    override fun registerImpl(context: Context) {
         val filter = IntentFilter().apply {
             addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         }
         context.registerReceiver(_observer, filter)
     }
 
-    override fun unregisterImpl() {
+    override fun unregisterImpl(context: Context) {
         context.unregisterReceiver(_observer)
     }
 }
 
-internal fun libIsNetworkAvailable(context: Context): Boolean {
+private fun libIsNetworkAvailable(context: Context): Boolean {
     val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val network = manager.activeNetwork ?: return false
     val capabilities = manager.getNetworkCapabilities(network) ?: return false
