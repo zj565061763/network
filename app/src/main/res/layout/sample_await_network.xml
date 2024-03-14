@@ -12,11 +12,4 @@
         android:text="launch"
         android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="cancel"
-        android:textAllCaps="false" />
-
 </LinearLayout>
