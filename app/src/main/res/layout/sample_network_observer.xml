@@ -6,17 +6,17 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/btn_SampleNetworkObserver"
+        android:id="@+id/btn_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SampleNetworkObserver"
+        android:text="register"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_SampleAwaitNetwork"
+        android:id="@+id/btn_unregister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SampleAwaitNetwork"
+        android:text="unregister"
         android:textAllCaps="false" />
 
 </LinearLayout>

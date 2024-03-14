@@ -37,7 +37,7 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.appcompat)
-    implementation(libs.sd.coroutine)
+    implementation(libs.androidx.lifecycle.viewmodel)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

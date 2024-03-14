@@ -22,6 +22,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SampleNetworkObserver" />
+        <activity android:name=".SampleAwaitNetwork" />
+
     </application>
 
 </manifest>
