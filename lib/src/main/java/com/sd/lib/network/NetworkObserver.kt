@@ -2,7 +2,6 @@ package com.sd.lib.network
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 abstract class FNetworkObserver {
@@ -11,16 +10,14 @@ abstract class FNetworkObserver {
 
     /**
      * 注册
-     * @param notify 注册成功之后是否立即通知一次回调，默认true
      */
-    @JvmOverloads
-    fun register(notify: Boolean = true) {
+    fun register() {
         synchronized(this@FNetworkObserver) {
             _job?.let { return }
             _job = _scope.launch {
-                fIsNetworkAvailableFlow
-                    .let { if (notify) it else it.drop(1) }
-                    .collect { onChange(it) }
+                fIsNetworkAvailableFlow.collect {
+                    onChange(it)
+                }
             }
         }
     }

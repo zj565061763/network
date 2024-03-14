@@ -11,9 +11,13 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import com.sd.lib.ctx.fContext
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
 /** 网络是否可用 */
@@ -21,13 +25,30 @@ val fIsNetworkAvailable: Boolean
     get() = libIsNetworkAvailable(fContext)
 
 /** 网络是否可用 */
-val fIsNetworkAvailableFlow: StateFlow<Boolean>
+val fIsNetworkAvailableFlow: Flow<Boolean>
     get() = NetworkObserverHolder.isNetworkAvailable
 
 private object NetworkObserverHolder {
-    private val _observer: NetworkObserver = networkObserver { _isNetworkAvailable.value = it }
-    private val _isNetworkAvailable: MutableStateFlow<Boolean> = MutableStateFlow(_observer.register(fContext))
-    val isNetworkAvailable: StateFlow<Boolean> = _isNetworkAvailable.asStateFlow()
+    private val _observer = networkObserver { _isNetworkAvailable.value = it }
+    private val _isNetworkAvailable = MutableStateFlow(false)
+
+    val isNetworkAvailable: Flow<Boolean> = _isNetworkAvailable.asStateFlow().drop(1)
+
+    init {
+        MainScope().launch {
+            _isNetworkAvailable.subscriptionCount
+                .map { it > 0 }
+                .collect { hasObserver ->
+                    if (hasObserver) {
+                        _observer.register(fContext).also {
+                            _isNetworkAvailable.value = it
+                        }
+                    } else {
+                        _observer.unregister(fContext)
+                    }
+                }
+        }
+    }
 }
 
 private fun networkObserver(
