@@ -38,8 +38,8 @@ private object NetworkObserverHolder {
         MainScope().launch {
             _isNetworkAvailable.subscriptionCount
                 .map { it > 0 }
-                .collect { hasObserver ->
-                    if (hasObserver) {
+                .collect { hasCollector ->
+                    if (hasCollector) {
                         _observer.register(fContext).also {
                             _isNetworkAvailable.value = it
                         }
