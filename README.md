@@ -10,12 +10,8 @@ val isNetworkAvailable = FNetworkObserver.isNetworkAvailable()
 
 ```kotlin
 private val networkObserver = object : FNetworkObserver() {
-    override fun onAvailable() {
-        // network available
-    }
-
-    override fun onLost() {
-        // network lost
+    override fun onChange(isAvailable: Boolean) {
+        // network state changed
     }
 }
 
