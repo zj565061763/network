@@ -14,28 +14,24 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal fun networkObserver(
     context: Context,
-    onAvailable: () -> Unit,
-    onLost: () -> Unit,
+    onChange: (isAvailable: Boolean) -> Unit,
 ): NetworkObserver {
     return if (Build.VERSION.SDK_INT >= 24) {
         NewObserver(
             context = context,
-            onAvailable = onAvailable,
-            onLost = onLost,
+            onChange = onChange,
         )
     } else {
         OldObserver(
             context = context,
-            onAvailable = onAvailable,
-            onLost = onLost,
+            onChange = onChange,
         )
     }
 }
 
 internal abstract class NetworkObserver(
     protected val context: Context,
-    private val onAvailable: () -> Unit,
-    private val onLost: () -> Unit,
+    private val onChange: (isAvailable: Boolean) -> Unit,
 ) {
     private val _register = AtomicBoolean()
 
@@ -43,12 +39,13 @@ internal abstract class NetworkObserver(
     private var _isNetworkAvailable: Boolean? = null
 
     fun register(): Boolean {
-        if (_register.compareAndSet(false, true)) {
+        return if (_register.compareAndSet(false, true)) {
             _isNetworkAvailable = libIsNetworkAvailable(context)
             registerImpl()
-            return true
+            true
+        } else {
+            false
         }
-        return false
     }
 
     fun unregister() {
@@ -63,7 +60,7 @@ internal abstract class NetworkObserver(
         Handler(Looper.getMainLooper()).post {
             if (_register.get()) {
                 _isNetworkAvailable?.let { isAvailable ->
-                    if (isAvailable) onAvailable() else onLost()
+                    onChange(isAvailable)
                 }
             }
         }
@@ -84,12 +81,10 @@ internal abstract class NetworkObserver(
 
 private class NewObserver(
     context: Context,
-    onAvailable: () -> Unit,
-    onLost: () -> Unit,
+    onChange: (isAvailable: Boolean) -> Unit,
 ) : NetworkObserver(
     context = context,
-    onAvailable = onAvailable,
-    onLost = onLost,
+    onChange = onChange,
 ) {
     private val _observer = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -118,12 +113,10 @@ private class NewObserver(
 
 private class OldObserver(
     context: Context,
-    onAvailable: () -> Unit,
-    onLost: () -> Unit,
+    onChange: (isAvailable: Boolean) -> Unit,
 ) : NetworkObserver(
     context = context,
-    onAvailable = onAvailable,
-    onLost = onLost,
+    onChange = onChange,
 ) {
     private val _observer = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

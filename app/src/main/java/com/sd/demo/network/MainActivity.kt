@@ -33,12 +33,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val _networkObserver = object : FNetworkObserver() {
-        override fun onAvailable() {
-            logMsg { "onAvailable" }
-        }
-
-        override fun onLost() {
-            logMsg { "onLost" }
+        override fun onChange(isAvailable: Boolean) {
+            logMsg { "onChange:$isAvailable" }
         }
     }
 

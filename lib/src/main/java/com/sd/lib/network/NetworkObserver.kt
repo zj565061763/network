@@ -6,8 +6,7 @@ abstract class FNetworkObserver {
 
     private val _observer = networkObserver(
         context = fContext,
-        onAvailable = { this@FNetworkObserver.onAvailable() },
-        onLost = { this@FNetworkObserver.onLost() },
+        onChange = { onChange(it) },
     )
 
     /**
@@ -31,14 +30,9 @@ abstract class FNetworkObserver {
     }
 
     /**
-     * 网络可用（主线程）
+     * 网络是否可用(MainThread)
      */
-    abstract fun onAvailable()
-
-    /**
-     * 网络不可用（主线程）
-     */
-    abstract fun onLost()
+    abstract fun onChange(isAvailable: Boolean)
 
     companion object {
         /**

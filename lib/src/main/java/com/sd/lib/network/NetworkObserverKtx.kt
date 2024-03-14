@@ -15,12 +15,12 @@ suspend fun fAwaitNetworkAvailable() {
     return suspendCancellableCoroutine { cont ->
 
         val observer = object : FNetworkObserver() {
-            override fun onAvailable() {
-                unregister()
-                cont.resumeWith(Result.success(Unit))
+            override fun onChange(isAvailable: Boolean) {
+                if (isAvailable) {
+                    unregister()
+                    cont.resumeWith(Result.success(Unit))
+                }
             }
-
-            override fun onLost() {}
         }
 
         cont.invokeOnCancellation {
