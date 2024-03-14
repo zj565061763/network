@@ -14,8 +14,7 @@ import com.sd.lib.ctx.fContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -30,9 +29,9 @@ val fIsNetworkAvailableFlow: Flow<Boolean>
 
 private object NetworkObserverHolder {
     private val _observer = networkObserver { _isNetworkAvailable.value = it }
-    private val _isNetworkAvailable = MutableStateFlow(false)
+    private val _isNetworkAvailable = MutableStateFlow<Boolean?>(null)
 
-    val isNetworkAvailable: Flow<Boolean> = _isNetworkAvailable.asStateFlow().drop(1)
+    val isNetworkAvailable: Flow<Boolean> = _isNetworkAvailable.filterNotNull()
 
     init {
         MainScope().launch {
@@ -44,7 +43,9 @@ private object NetworkObserverHolder {
                             _isNetworkAvailable.value = it
                         }
                     } else {
-                        _observer.unregister(fContext)
+                        _observer.unregister(fContext).also {
+                            _isNetworkAvailable.value = null
+                        }
                     }
                 }
         }
