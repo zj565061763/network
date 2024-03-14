@@ -31,6 +31,7 @@ abstract class FNetworkObserver {
 
     /**
      * 网络是否可用(MainThread)
+     * @param isAvailable true-网络可用；false-网络不可用
      */
     abstract fun onChange(isAvailable: Boolean)
 
