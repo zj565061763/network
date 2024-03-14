@@ -12,9 +12,11 @@ class SampleNetworkObserver : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
         _binding.btnRegister.setOnClickListener {
+            logMsg { "click register" }
             _observer.register()
         }
         _binding.btnUnregister.setOnClickListener {
+            logMsg { "click unregister" }
             _observer.unregister()
         }
     }
