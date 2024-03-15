@@ -8,15 +8,20 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 suspend fun fAwaitNetworkAvailable() {
     if (fIsNetworkAvailable) return
     suspendCancellableCoroutine { continuation ->
-        val observer = object : FNetworkObserver() {
-            override fun onChange(isAvailable: Boolean) {
-                if (isAvailable) {
-                    unregister()
-                    continuation.resumeWith(Result.success(Unit))
+        if (fIsNetworkAvailable) {
+            continuation.resumeWith(Result.success(Unit))
+        } else {
+            object : FNetworkObserver() {
+                override fun onChange(isAvailable: Boolean) {
+                    if (isAvailable) {
+                        unregister()
+                        continuation.resumeWith(Result.success(Unit))
+                    }
                 }
+            }.also { observer ->
+                observer.register()
+                continuation.invokeOnCancellation { observer.unregister() }
             }
         }
-        observer.register()
-        continuation.invokeOnCancellation { observer.unregister() }
     }
 }
