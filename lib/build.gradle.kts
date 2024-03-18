@@ -12,7 +12,7 @@ android {
     namespace = "com.sd.lib.network"
     compileSdk = libs.versions.androidCompileSdk.get().toInt()
     defaultConfig {
-        minSdk = 23
+        minSdk = 21
     }
 
     kotlinOptions {
