@@ -87,7 +87,6 @@ private abstract class NetworkObserver(
     fun unregister(context: Context) {
         if (_register.compareAndSet(true, false)) {
             unregisterImpl(context)
-            _isAvailable.set(false)
         }
     }
 
