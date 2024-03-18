@@ -6,7 +6,7 @@ plugins {
 
 val libGroupId = "com.sd.lib.android"
 val libArtifactId = "network"
-val libVersionName = "1.2.1"
+val libVersionName = "1.2.2"
 
 android {
     namespace = "com.sd.lib.network"
