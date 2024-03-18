@@ -28,10 +28,10 @@ val fIsNetworkAvailableFlow: Flow<Boolean>
     get() = NetworkObserverHolder.isNetworkAvailable
 
 private object NetworkObserverHolder {
-    private val _observer = networkObserver { _isNetworkAvailable.value = it }
     private val _isNetworkAvailable = MutableStateFlow<Boolean?>(null)
+    private val _observer = networkObserver { _isNetworkAvailable.value = it }
 
-    val isNetworkAvailable: Flow<Boolean> = _isNetworkAvailable.filterNotNull()
+    val isNetworkAvailable: Flow<Boolean> get() = _isNetworkAvailable.filterNotNull()
 
     init {
         MainScope().launch {
