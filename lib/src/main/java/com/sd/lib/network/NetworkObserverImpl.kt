@@ -14,6 +14,7 @@ import com.sd.lib.ctx.fContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -37,6 +38,7 @@ private object NetworkObserverHolder {
         MainScope().launch {
             _isNetworkAvailable.subscriptionCount
                 .map { it > 0 }
+                .distinctUntilChanged()
                 .collect { hasCollector ->
                     if (hasCollector) {
                         _observer.register(fContext).also {
