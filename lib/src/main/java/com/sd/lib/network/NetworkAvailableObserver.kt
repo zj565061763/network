@@ -5,6 +5,9 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
+/**
+ * 监听网络是否可用
+ */
 abstract class FNetworkAvailableObserver {
     private val _scope = MainScope()
     private var _job: Job? = null
