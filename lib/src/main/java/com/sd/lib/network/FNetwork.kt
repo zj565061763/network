@@ -6,8 +6,10 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.sd.lib.ctx.fContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,10 +18,11 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
 object FNetwork {
-    private val _scope = MainScope()
+    private val _scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val _connectivityManager = fContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     private val _networkStateFlow = MutableStateFlow<NetworkState?>(null)
+    private var _checkJob: Job? = null
 
     /** 网络状态 */
     val networkState: NetworkState get() = _connectivityManager.networkState()
@@ -46,18 +49,25 @@ object FNetwork {
 
         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
             super.onCapabilitiesChanged(network, networkCapabilities)
+            checkNetworkState()
+        }
+    }
+
+    private fun checkNetworkState() {
+        _checkJob?.cancel()
+        _checkJob = _scope.launch {
             _networkStateFlow.value = _connectivityManager.networkState()
         }
     }
 
     init {
         // 注册观察者
-        _scope.launch(Dispatchers.IO) {
+        _scope.launch {
+            val request = NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
             while (true) {
                 try {
-                    val request = NetworkRequest.Builder()
-                        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                        .build()
                     _connectivityManager.registerNetworkCallback(request, _networkCallback)
                     break
                 } catch (e: RuntimeException) {
