@@ -6,9 +6,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
- * 监听网络是否可用
+ * 监听网络状态
  */
-abstract class FNetworkAvailableObserver {
+abstract class FNetworkStateObserver {
     private val _scope = MainScope()
     private var _job: Job? = null
 
@@ -19,7 +19,7 @@ abstract class FNetworkAvailableObserver {
     fun register() {
         _job?.let { return }
         _job = _scope.launch {
-            FNetwork.isAvailableFlow.collect {
+            FNetwork.networkStateFlow.collect {
                 onChange(it)
             }
         }
@@ -35,21 +35,20 @@ abstract class FNetworkAvailableObserver {
     }
 
     /**
-     * 网络是否可用(MainThread)
-     * @param isAvailable true-网络可用；false-网络不可用
+     * 网络状态变化(MainThread)
      */
-    abstract fun onChange(isAvailable: Boolean)
+    abstract fun onChange(networkState: NetworkState)
 }
 
 /**
- * 如果网络可用，直接返回；如果网络不可用，会挂起直到网络可用。
+ * 如果网络已连接，直接返回，否则挂起直到网络已连接
  */
-suspend fun fNetworkAvailableAwait() {
-    if (FNetwork.isAvailable) return
+suspend fun fNetworkConnectedAwait() {
+    if (FNetwork.networkState.isConnected()) return
     suspendCancellableCoroutine { continuation ->
-        object : FNetworkAvailableObserver() {
-            override fun onChange(isAvailable: Boolean) {
-                if (isAvailable) {
+        object : FNetworkStateObserver() {
+            override fun onChange(networkState: NetworkState) {
+                if (networkState.isConnected()) {
                     unregister()
                     continuation.resumeWith(Result.success(Unit))
                 }

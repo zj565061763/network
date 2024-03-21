@@ -3,9 +3,8 @@ package com.sd.demo.network
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sd.demo.network.databinding.SampleNetworkObserverBinding
-import com.sd.lib.network.FNetworkAvailableObserver
-import com.sd.lib.network.FNetworkTypeObserver
-import com.sd.lib.network.NetworkType
+import com.sd.lib.network.FNetworkStateObserver
+import com.sd.lib.network.NetworkState
 
 class SampleNetworkObserver : AppCompatActivity() {
     private val _binding by lazy { SampleNetworkObserverBinding.inflate(layoutInflater) }
@@ -14,29 +13,21 @@ class SampleNetworkObserver : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
         _binding.btnRegister.setOnClickListener {
-            _availableObserver.register()
-            _typeObserver.register()
+            _observer.register()
         }
         _binding.btnUnregister.setOnClickListener {
-            _availableObserver.unregister()
-            _typeObserver.unregister()
+            _observer.unregister()
         }
     }
 
-    private val _availableObserver = object : FNetworkAvailableObserver() {
-        override fun onChange(isAvailable: Boolean) {
-            logMsg { "isAvailable:$isAvailable" }
-        }
-    }
-
-    private val _typeObserver = object : FNetworkTypeObserver() {
-        override fun onChange(networkType: NetworkType) {
-            logMsg { "networkType:$networkType" }
+    private val _observer = object : FNetworkStateObserver() {
+        override fun onChange(networkState: NetworkState) {
+            logMsg { "onChange:$networkState" }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        _availableObserver.unregister()
+        _observer.unregister()
     }
 }
