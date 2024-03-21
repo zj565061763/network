@@ -18,23 +18,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-enum class NetworkType {
-    /** 未知 */
-    Unknown,
-
-    /** 网络不可用 */
-    None,
-
-    /** wifi网络 */
-    Wifi,
-
-    /** 手机网络 */
-    Cellular,
-
-    /** 其他网络 */
-    Other,
-}
-
 object FNetwork {
     private val _scope = MainScope()
     private val _connectivityManager = fContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
