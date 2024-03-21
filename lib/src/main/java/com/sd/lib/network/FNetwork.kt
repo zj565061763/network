@@ -30,20 +30,18 @@ object FNetwork {
     val networkStateFlow: Flow<NetworkState> get() = _networkStateFlow.filterNotNull()
 
     private val _networkCallback = object : ConnectivityManager.NetworkCallback() {
-        private var _networkCount = 0
+        private var _networks: MutableSet<Network> = hashSetOf()
 
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
-            _networkCount++
+            _networks.add(network)
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
-            (_networkCount - 1).coerceAtLeast(0).let { count ->
-                _networkCount = count
-                if (count == 0) {
-                    _networkStateFlow.value = NetworkStateNone
-                }
+            _networks.remove(network)
+            if (_networks.isEmpty()) {
+                _networkStateFlow.value = NetworkStateNone
             }
         }
 
@@ -69,6 +67,7 @@ object FNetwork {
             while (true) {
                 try {
                     _connectivityManager.registerNetworkCallback(request, _networkCallback)
+                    _networkStateFlow.value = _connectivityManager.networkState()
                     break
                 } catch (e: RuntimeException) {
                     e.printStackTrace()
