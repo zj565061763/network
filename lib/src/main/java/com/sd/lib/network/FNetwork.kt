@@ -11,7 +11,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -29,15 +28,16 @@ object FNetwork {
 
     /** 网络是否可用 */
     val isAvailable: Boolean get() = _connectivityManager.libNetworkIsAvailable()
-
     /** 监听网络是否可用 */
     val isAvailableFlow: Flow<Boolean> get() = _isAvailableFlow.filterNotNull()
 
-    /** 监听网络类型 */
+    /** 当前可用的网络类型 */
+    val networkType: NetworkType get() = _connectivityManager.libNetworkType()
+    /** 监听当前可用的网络类型 */
     val networkTypeFlow: Flow<NetworkType> get() = _networkTypeFlow.filterNotNull()
 
     init {
-        // 获取网络是否可用
+        // 网络是否可用
         _scope.launch {
             _networksObserver.networksFlow
                 .map { it.isNotEmpty() }
@@ -47,12 +47,12 @@ object FNetwork {
                 }
         }
 
-        // 获取网络类型
+        // 网络类型
         _scope.launch(Dispatchers.IO) {
             _networksObserver.networksFlow
                 .map { it.size }
                 .distinctUntilChanged()
-                .collectLatest { size ->
+                .collect { size ->
                     _networkTypeFlow.value = if (size > 0) {
                         _connectivityManager.libNetworkType()
                     } else {
@@ -62,15 +62,15 @@ object FNetwork {
         }
 
         // 注册观察者
-        _scope.launch {
+        _scope.launch(Dispatchers.IO) {
             while (true) {
                 try {
                     _networksObserver.register(_connectivityManager)
                     break
                 } catch (e: RuntimeException) {
                     e.printStackTrace()
-                    _networkTypeFlow.value = NetworkType.Unknown
-                    delay(60.seconds)
+                    _networkTypeFlow.value = _connectivityManager.libNetworkType()
+                    delay(1.seconds)
                 }
             }
         }
