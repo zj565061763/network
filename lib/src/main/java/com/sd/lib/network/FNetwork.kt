@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import kotlin.time.Duration.Companion.seconds
 
 object FNetwork {
@@ -22,16 +23,22 @@ object FNetwork {
     private val _connectivityManager = fContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     private val _networkStateFlow = MutableStateFlow<NetworkState?>(null)
-    private var _checkJob: Job? = null
+
+    private val _networks: MutableSet<Network> = hashSetOf()
+    private var _updateJob: Job? = null
 
     /** 网络状态 */
-    val networkState: NetworkState get() = _connectivityManager.networkState()
+    val networkState: NetworkState
+        get() {
+            updateNetworkState()
+            return _connectivityManager.networkState()
+        }
+
     /** 监听网络状态 */
-    val networkStateFlow: Flow<NetworkState> get() = _networkStateFlow.filterNotNull()
+    val networkStateFlow: Flow<NetworkState>
+        get() = _networkStateFlow.filterNotNull()
 
     private val _networkCallback = object : ConnectivityManager.NetworkCallback() {
-        private var _networks: MutableSet<Network> = hashSetOf()
-
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             _networks.add(network)
@@ -41,19 +48,21 @@ object FNetwork {
             super.onLost(network)
             _networks.remove(network)
             if (_networks.isEmpty()) {
+                _updateJob?.cancel()
                 _networkStateFlow.value = NetworkStateNone
             }
         }
 
         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
             super.onCapabilitiesChanged(network, networkCapabilities)
-            checkNetworkState()
+            updateNetworkState()
         }
     }
 
-    private fun checkNetworkState() {
-        _checkJob?.cancel()
-        _checkJob = _scope.launch {
+    private fun updateNetworkState() {
+        _updateJob?.cancel()
+        _updateJob = _scope.launch {
+            yield()
             _networkStateFlow.value = _connectivityManager.networkState()
         }
     }
