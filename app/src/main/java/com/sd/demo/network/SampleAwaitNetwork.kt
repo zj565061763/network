@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.sd.demo.network.databinding.SampleAwaitNetworkBinding
-import com.sd.lib.network.fAwaitNetworkAvailable
+import com.sd.lib.network.fNetworkAvailableAwait
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -24,7 +24,7 @@ class SampleAwaitNetwork : AppCompatActivity() {
     private suspend fun launchNetWorkAvailable() {
         val uuid = UUID.randomUUID().toString()
         logMsg { "start $uuid" }
-        fAwaitNetworkAvailable()
+        fNetworkAvailableAwait()
         logMsg { "finish $uuid" }
     }
 }

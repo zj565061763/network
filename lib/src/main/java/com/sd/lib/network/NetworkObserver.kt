@@ -3,21 +3,21 @@ package com.sd.lib.network
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 
-abstract class FNetworkObserver {
+abstract class FNetworkAvailableObserver {
     private val _scope = MainScope()
     private var _job: Job? = null
 
     /**
      * 注册
      */
+    @Synchronized
     fun register() {
-        synchronized(this@FNetworkObserver) {
-            _job?.let { return }
-            _job = _scope.launch {
-                fIsNetworkAvailableFlow.collect {
-                    onChange(it)
-                }
+        _job?.let { return }
+        _job = _scope.launch {
+            FNetwork.isAvailableFlow.collect {
+                onChange(it)
             }
         }
     }
@@ -25,11 +25,10 @@ abstract class FNetworkObserver {
     /**
      * 取消注册
      */
+    @Synchronized
     fun unregister() {
-        synchronized(this@FNetworkObserver) {
-            _job?.cancel()
-            _job = null
-        }
+        _job?.cancel()
+        _job = null
     }
 
     /**
@@ -37,12 +36,24 @@ abstract class FNetworkObserver {
      * @param isAvailable true-网络可用；false-网络不可用
      */
     abstract fun onChange(isAvailable: Boolean)
+}
 
-    companion object {
-        /**
-         * 网络是否可用
-         */
-        @JvmStatic
-        fun isNetworkAvailable(): Boolean = fIsNetworkAvailable
+/**
+ * 如果网络可用，直接返回；如果网络不可用，会挂起直到网络可用。
+ */
+suspend fun fNetworkAvailableAwait() {
+    if (FNetwork.isAvailable) return
+    suspendCancellableCoroutine { continuation ->
+        object : FNetworkAvailableObserver() {
+            override fun onChange(isAvailable: Boolean) {
+                if (isAvailable) {
+                    unregister()
+                    continuation.resumeWith(Result.success(Unit))
+                }
+            }
+        }.also { observer ->
+            observer.register()
+            continuation.invokeOnCancellation { observer.unregister() }
+        }
     }
 }
