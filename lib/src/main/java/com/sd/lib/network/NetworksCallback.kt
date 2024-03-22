@@ -34,13 +34,31 @@ internal class NetworksCallback(
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
         get() = networksFlow
-            .map { list ->
-                list.firstOrNull {
-                    it.netId == _connectivityManager.activeNetwork.toString()
-                } ?: NetworkStateNone
-            }
+            .map { it.filterCurrentNetwork() }
+            .filterNotNull()
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
+
+    /**
+     * 注册回调对象
+     */
+    suspend fun register() {
+        val request = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+
+        while (true) {
+            try {
+                _connectivityManager.registerNetworkCallback(request, _networkCallback)
+                break
+            } catch (e: RuntimeException) {
+                e.printStackTrace()
+                delay(1.seconds)
+            } finally {
+                updateCurrentNetwork()
+            }
+        }
+    }
 
     private val _networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onLost(network: Network) {
@@ -56,7 +74,10 @@ internal class NetworksCallback(
         }
     }
 
-    private fun updateDefaultNetwork() {
+    /**
+     * 更新当前网络状态
+     */
+    private fun updateCurrentNetwork() {
         val oldList = _networksFlow.value
         if (oldList.isNullOrEmpty() || oldList.size == 1) {
             val newList = listOf(_connectivityManager.networkState())
@@ -64,21 +85,18 @@ internal class NetworksCallback(
         }
     }
 
-    suspend fun register() {
-        val request = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .build()
-
+    /**
+     * 筛选当前网络状态
+     */
+    private suspend fun List<NetworkState>.filterCurrentNetwork(): NetworkState? {
+        if (this.isEmpty()) return NetworkStateNone
         while (true) {
-            try {
-                _connectivityManager.registerNetworkCallback(request, _networkCallback)
-                break
-            } catch (e: RuntimeException) {
-                e.printStackTrace()
+            val activeNetwork = _connectivityManager.activeNetwork
+            if (activeNetwork == null) {
                 delay(1.seconds)
-            } finally {
-                updateDefaultNetwork()
+                continue
             }
+            return this.firstOrNull { it.netId == activeNetwork.toString() }
         }
     }
 }
