@@ -15,11 +15,11 @@ class MainActivity : AppCompatActivity() {
         _binding.btnSampleCurrentNetwork.setOnClickListener {
             startActivity(Intent(this, SampleCurrentNetwork::class.java))
         }
-        _binding.btnSampleNetworkAwait.setOnClickListener {
-            startActivity(Intent(this, SampleNetworkAwait::class.java))
-        }
         _binding.btnSampleAllNetworks.setOnClickListener {
             startActivity(Intent(this, SampleAllNetworks::class.java))
+        }
+        _binding.btnSampleNetworkAwait.setOnClickListener {
+            startActivity(Intent(this, SampleNetworkAwait::class.java))
         }
     }
 }

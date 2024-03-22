@@ -13,17 +13,17 @@
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_SampleNetworkAwait"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SampleNetworkAwait"
-        android:textAllCaps="false" />
-
-    <Button
         android:id="@+id/btn_SampleAllNetworks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SampleAllNetworks"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_SampleNetworkAwait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SampleNetworkAwait"
         android:textAllCaps="false" />
 
 </LinearLayout>
