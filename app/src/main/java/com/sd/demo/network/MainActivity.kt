@@ -15,8 +15,8 @@ class MainActivity : AppCompatActivity() {
         _binding.btnSampleNetworkObserver.setOnClickListener {
             startActivity(Intent(this, SampleNetworkObserver::class.java))
         }
-        _binding.btnSampleAwaitNetwork.setOnClickListener {
-            startActivity(Intent(this, SampleAwaitNetwork::class.java))
+        _binding.btnSampleNetworkAwait.setOnClickListener {
+            startActivity(Intent(this, SampleNetworkAwait::class.java))
         }
     }
 }

@@ -3,25 +3,25 @@ package com.sd.demo.network
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.sd.demo.network.databinding.SampleAwaitNetworkBinding
+import com.sd.demo.network.databinding.SampleNetworkAwaitBinding
 import com.sd.lib.network.fNetworkAwait
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class SampleAwaitNetwork : AppCompatActivity() {
-    private val _binding by lazy { SampleAwaitNetworkBinding.inflate(layoutInflater) }
+class SampleNetworkAwait : AppCompatActivity() {
+    private val _binding by lazy { SampleNetworkAwaitBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
         _binding.btnLaunch.setOnClickListener {
             lifecycleScope.launch {
-                launchNetWorkAvailable()
+                launchNetWorkAwait()
             }
         }
     }
 
-    private suspend fun launchNetWorkAvailable() {
+    private suspend fun launchNetWorkAwait() {
         val uuid = UUID.randomUUID().toString()
         logMsg { "start $uuid" }
         fNetworkAwait()
