@@ -13,7 +13,9 @@ class SampleAllNetworks : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
+
         lifecycleScope.launch {
+            // 监听所有网络
             FNetwork.allNetworksFlow.collect {
                 logMsg {
                     it.joinToString(separator = "\n")

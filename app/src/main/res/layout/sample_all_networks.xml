@@ -5,18 +5,4 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="register"
-        android:textAllCaps="false" />
-
-    <Button
-        android:id="@+id/btn_unregister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unregister"
-        android:textAllCaps="false" />
-
 </LinearLayout>
