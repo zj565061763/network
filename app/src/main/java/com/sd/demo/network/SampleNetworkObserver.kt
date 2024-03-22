@@ -31,9 +31,7 @@ class SampleNetworkObserver : AppCompatActivity() {
             logMsg {
                 """
                     $networkState
-                    
                     $wifiOrCellular
-                    
                     isConnected:${networkState.isConnected()}
                     isAvailable:${networkState.isAvailable()}
                 """.trimIndent()
