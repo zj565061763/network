@@ -3,7 +3,7 @@ package com.sd.demo.network
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sd.demo.network.databinding.SampleNetworkObserverBinding
-import com.sd.lib.network.FNetworkStateObserver
+import com.sd.lib.network.FNetworkObserver
 import com.sd.lib.network.NetworkState
 
 class SampleNetworkObserver : AppCompatActivity() {
@@ -20,7 +20,7 @@ class SampleNetworkObserver : AppCompatActivity() {
         }
     }
 
-    private val _observer = object : FNetworkStateObserver() {
+    private val _observer = object : FNetworkObserver() {
         override fun onChange(networkState: NetworkState) {
             logMsg { "onChange:$networkState" }
         }

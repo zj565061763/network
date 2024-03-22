@@ -6,9 +6,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
- * 监听网络状态
+ * 监听当前网络
  */
-abstract class FNetworkStateObserver {
+abstract class FNetworkObserver {
     private val _scope = MainScope()
     private var _job: Job? = null
 
@@ -46,7 +46,7 @@ abstract class FNetworkStateObserver {
 suspend fun fNetworkConnectedAwait() {
     if (FNetwork.currentNetwork.isConnected()) return
     suspendCancellableCoroutine { continuation ->
-        object : FNetworkStateObserver() {
+        object : FNetworkObserver() {
             override fun onChange(networkState: NetworkState) {
                 if (networkState.isConnected()) {
                     unregister()
