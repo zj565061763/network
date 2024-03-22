@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import java.util.Collections
 import kotlin.time.Duration.Companion.seconds
 
 object FNetwork {
@@ -24,7 +25,7 @@ object FNetwork {
 
     private val _networkStateFlow = MutableStateFlow<NetworkState?>(null)
 
-    private val _networks: MutableSet<Network> = hashSetOf()
+    private val _networks: MutableSet<Network> = Collections.synchronizedSet(hashSetOf())
     private var _updateJob: Job? = null
 
     /** 网络状态 */
@@ -47,10 +48,7 @@ object FNetwork {
         override fun onLost(network: Network) {
             super.onLost(network)
             _networks.remove(network)
-            if (_networks.isEmpty()) {
-                _updateJob?.cancel()
-                _networkStateFlow.value = NetworkStateNone
-            }
+            updateNetworkState()
         }
 
         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
@@ -62,28 +60,46 @@ object FNetwork {
     private fun updateNetworkState() {
         _updateJob?.cancel()
         _updateJob = _scope.launch {
-            yield()
-            _networkStateFlow.value = _connectivityManager.networkState()
+            while (true) {
+                yield()
+                if (_networks.isEmpty()) {
+                    _networkStateFlow.value = NetworkStateNone
+                    break
+                } else {
+                    if (_connectivityManager.activeNetwork == null) {
+                        delay(1.seconds)
+                        continue
+                    } else {
+                        updateFlow()
+                        break
+                    }
+                }
+            }
         }
+    }
+
+    private fun updateFlow() {
+        _networkStateFlow.value = _connectivityManager.networkState()
     }
 
     init {
         // 注册观察者
         _scope.launch {
-            val request = NetworkRequest.Builder()
+            NetworkRequest.Builder()
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .build()
-            while (true) {
-                try {
-                    _connectivityManager.registerNetworkCallback(request, _networkCallback)
-                    _networkStateFlow.value = _connectivityManager.networkState()
-                    break
-                } catch (e: RuntimeException) {
-                    e.printStackTrace()
-                    _networkStateFlow.value = _connectivityManager.networkState()
-                    delay(1.seconds)
+                .build()?.let { request ->
+                    while (true) {
+                        try {
+                            _connectivityManager.registerNetworkCallback(request, _networkCallback)
+                            break
+                        } catch (e: RuntimeException) {
+                            e.printStackTrace()
+                            delay(1.seconds)
+                        } finally {
+                            updateFlow()
+                        }
+                    }
                 }
-            }
         }
     }
 }
