@@ -24,6 +24,7 @@
 
         <activity android:name=".SampleNetworkObserver" />
         <activity android:name=".SampleNetworkAwait" />
+        <activity android:name=".SampleAllNetworks" />
 
     </application>
 
