@@ -16,9 +16,9 @@ class SampleAllNetworks : AppCompatActivity() {
 
         lifecycleScope.launch {
             // 监听所有网络
-            FNetwork.allNetworksFlow.collect {
+            FNetwork.allNetworksFlow.collect { list ->
                 logMsg {
-                    it.joinToString(separator = "\n")
+                    "size:${list.size}\n${list.joinToString(separator = "\n")}"
                 }
             }
         }
