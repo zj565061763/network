@@ -61,8 +61,8 @@ class SampleCurrentNetwork : AppCompatActivity() {
         logMsg {
             """
                     $tag
-                    $networkState
-                    $wifiOrCellular
+                    netId:${networkState.netId}
+                    type:$wifiOrCellular
                     isConnected:${networkState.isConnected()}
                     isAvailable:${networkState.isAvailable()}
                      
