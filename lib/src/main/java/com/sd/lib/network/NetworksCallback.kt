@@ -14,15 +14,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.seconds
 
 internal class NetworksCallback(
     context: Context
 ) {
     private val _connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-    private val _register = AtomicBoolean(false)
     private val _scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val _networks: MutableMap<Network, NetworkState> = hashMapOf()
@@ -60,28 +57,26 @@ internal class NetworksCallback(
      * 注册回调对象
      */
     fun register() {
-        if (_register.compareAndSet(false, true)) {
-            _scope.launch {
-                val request = NetworkRequest.Builder()
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    .build()
-                while (true) {
-                    try {
-                        _connectivityManager.registerNetworkCallback(request, _networkCallback)
-                        break
-                    } catch (e: RuntimeException) {
-                        e.printStackTrace()
-                        delay(1.seconds)
-                    } finally {
-                        updateCurrentNetwork()
-                    }
+        _scope.launch {
+            val request = NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
+            while (true) {
+                try {
+                    _connectivityManager.registerNetworkCallback(request, _networkCallback)
+                    break
+                } catch (e: RuntimeException) {
+                    e.printStackTrace()
+                    delay(1.seconds)
+                } finally {
+                    updateCurrentNetwork()
                 }
             }
-            _scope.launch {
-                allNetworksFlow.collectLatest { list ->
-                    list.filterCurrentNetwork()?.let {
-                        _currentNetworkFlow.value = it
-                    }
+        }
+        _scope.launch {
+            allNetworksFlow.collectLatest { list ->
+                list.filterCurrentNetwork()?.let {
+                    _currentNetworkFlow.value = it
                 }
             }
         }
