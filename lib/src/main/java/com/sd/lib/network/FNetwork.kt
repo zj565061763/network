@@ -107,9 +107,11 @@ object FNetwork {
 /**
  * 网络是否可用
  */
-private fun ConnectivityManager.networkState(): NetworkState {
-    val network = activeNetwork ?: return NetworkStateNone
-    val capabilities = getNetworkCapabilities(network) ?: return NetworkStateNone
+private fun ConnectivityManager.networkState(
+    network: Network? = null,
+): NetworkState {
+    val realNetwork = network ?: activeNetwork ?: return NetworkStateNone
+    val capabilities = getNetworkCapabilities(realNetwork) ?: return NetworkStateNone
 
     if (!capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
         return NetworkStateNone
@@ -124,6 +126,6 @@ private fun ConnectivityManager.networkState(): NetworkState {
     return NetworkState(
         networkType = networkType,
         isAvailable = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
-        netId = network.toString(),
+        netId = realNetwork.toString(),
     )
 }
