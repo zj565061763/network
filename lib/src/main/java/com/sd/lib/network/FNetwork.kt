@@ -12,13 +12,16 @@ object FNetwork {
     private val _networksCallback = NetworksCallback(fContext)
 
     /** 监听所有网络 */
-    val networksFlow: Flow<List<NetworkState>> get() = _networksCallback.networksFlow
+    val networksFlow: Flow<List<NetworkState>>
+        get() = _networksCallback.networksFlow
 
     /** 当前网络 */
-    val currentNetwork: NetworkState get() = _networksCallback.currentNetwork
+    val currentNetwork: NetworkState
+        get() = _networksCallback.currentNetwork
 
     /** 监听当前网络 */
-    val currentNetworkFlow: Flow<NetworkState> get() = _networksCallback.currentNetworkFlow
+    val currentNetworkFlow: Flow<NetworkState>
+        get() = _networksCallback.currentNetworkFlow
 
     init {
         // 注册观察者

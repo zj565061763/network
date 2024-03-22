@@ -24,16 +24,21 @@ internal class NetworksCallback(
     private val _networksFlow = MutableStateFlow<List<NetworkState>?>(null)
 
     /** 监听所有网络 */
-    val networksFlow: Flow<List<NetworkState>> get() = _networksFlow.filterNotNull()
+    val networksFlow: Flow<List<NetworkState>>
+        get() = _networksFlow.filterNotNull()
 
     /** 当前网络 */
-    val currentNetwork: NetworkState get() = _connectivityManager.networkState()
+    val currentNetwork: NetworkState
+        get() = _connectivityManager.networkState()
 
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
         get() = networksFlow
-            .map { list -> list.firstOrNull { it.netId == _connectivityManager.activeNetwork.toString() } }
-            .filterNotNull()
+            .map { list ->
+                list.firstOrNull {
+                    it.netId == _connectivityManager.activeNetwork.toString()
+                } ?: NetworkStateNone
+            }
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
 
