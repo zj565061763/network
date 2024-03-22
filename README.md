@@ -59,6 +59,15 @@ lifecycleScope.launch {
 # 协程挂起
 
 ```kotlin
+lifecycleScope.launch {
+    // 挂起直到网络已连接
+    fNetworkAwait()
+}
+```
+
+`fNetworkAwait`函数：
+
+```kotlin
 /**
  * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
  */
