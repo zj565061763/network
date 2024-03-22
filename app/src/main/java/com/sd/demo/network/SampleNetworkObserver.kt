@@ -22,7 +22,17 @@ class SampleNetworkObserver : AppCompatActivity() {
 
     private val _observer = object : FNetworkObserver() {
         override fun onChange(networkState: NetworkState) {
-            logMsg { "onChange:$networkState" }
+            logMsg {
+                """
+                    $networkState
+                    
+                    isWifi:${networkState.isWifi()}
+                    isCellular:${networkState.isCellular()}
+                    
+                    isConnected:${networkState.isConnected()}
+                    isAvailable:${networkState.isAvailable()}
+                """.trimIndent()
+            }
         }
     }
 
