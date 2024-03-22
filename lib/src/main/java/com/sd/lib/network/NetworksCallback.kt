@@ -29,7 +29,7 @@ internal class NetworksCallback(
 
     /** 当前网络 */
     val currentNetwork: NetworkState
-        get() = _connectivityManager.networkState()
+        get() = _connectivityManager.currentNetworkState()
 
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
@@ -89,7 +89,7 @@ internal class NetworksCallback(
     private fun updateCurrentNetwork() {
         val oldList = _allNetworksFlow.value
         if (oldList.isNullOrEmpty() || oldList.size == 1) {
-            val newList = listOf(_connectivityManager.networkState())
+            val newList = listOf(_connectivityManager.currentNetworkState())
             _allNetworksFlow.compareAndSet(oldList, newList)
         }
     }
@@ -111,7 +111,7 @@ internal class NetworksCallback(
     }
 }
 
-private fun ConnectivityManager.networkState(): NetworkState {
+private fun ConnectivityManager.currentNetworkState(): NetworkState {
     val network = activeNetwork ?: return NetworkStateNone
     val capabilities = getNetworkCapabilities(network) ?: return NetworkStateNone
     return network.toNetworkState(capabilities)
