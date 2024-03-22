@@ -59,7 +59,7 @@ abstract class FNetworkObserver {
     /**
      * 网络状态变化(MainThread)
      */
-    abstract fun onChange(networkState: NetworkState)
+    protected abstract fun onChange(networkState: NetworkState)
 }
 
 /**
