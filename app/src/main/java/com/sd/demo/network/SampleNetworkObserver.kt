@@ -22,12 +22,17 @@ class SampleNetworkObserver : AppCompatActivity() {
 
     private val _observer = object : FNetworkObserver() {
         override fun onChange(networkState: NetworkState) {
+            val wifiOrCellular = when {
+                networkState.isWifi() -> "Wifi"
+                networkState.isCellular() -> "Cellular"
+                else -> "None"
+            }
+
             logMsg {
                 """
                     $networkState
                     
-                    isWifi:${networkState.isWifi()}
-                    isCellular:${networkState.isCellular()}
+                    $wifiOrCellular
                     
                     isConnected:${networkState.isConnected()}
                     isAvailable:${networkState.isAvailable()}
