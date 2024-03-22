@@ -95,8 +95,9 @@ internal class NetworksCallback(
             if (activeNetwork == null) {
                 delay(1.seconds)
                 continue
+            } else {
+                return this.firstOrNull { it.netId == activeNetwork.toString() }
             }
-            return this.firstOrNull { it.netId == activeNetwork.toString() }
         }
     }
 }
