@@ -1,41 +1,51 @@
 package com.sd.lib.network
 
+import android.net.NetworkCapabilities
+
 /**
  * 网络状态
  */
 data class NetworkState(
-    /** 网络类型 */
-    val networkType: NetworkType,
-
     /** 网络Id */
     val netId: String,
 
-    /** 网络是否可用 */
-    val isAvailable: Boolean,
+    /** [NetworkCapabilities.TRANSPORT_WIFI] */
+    val transportWifi: Boolean,
+
+    /** [NetworkCapabilities.TRANSPORT_CELLULAR] */
+    val transportCellular: Boolean,
+
+    /** [NetworkCapabilities.NET_CAPABILITY_INTERNET] */
+    val netCapabilityInternet: Boolean,
+
+    /** [NetworkCapabilities.NET_CAPABILITY_VALIDATED] */
+    val netCapabilityValidated: Boolean,
 ) {
     /**
-     * 网络是否已连接，
-     * 注意：已连接不代表网络可用
+     * 是否Wifi网络
      */
-    fun isConnected(): Boolean = this.networkType != NetworkType.None
-}
+    fun isWifi(): Boolean = this.transportWifi
 
-enum class NetworkType {
-    /** 网络不可用 */
-    None,
+    /**
+     * 是否手机网络
+     */
+    fun isCellular(): Boolean = this.transportCellular
 
-    /** wifi网络 */
-    Wifi,
+    /**
+     * 网络是否已连接，注意：已连接不代表网络可用
+     */
+    fun isConnected(): Boolean = this.netCapabilityInternet
 
-    /** 手机网络 */
-    Cellular,
-
-    /** 其他网络 */
-    Other,
+    /**
+     * 网络是否可用
+     */
+    fun isAvailable(): Boolean = this.netCapabilityValidated
 }
 
 internal val NetworkStateNone = NetworkState(
-    networkType = NetworkType.None,
     netId = "",
-    isAvailable = false,
+    transportWifi = false,
+    transportCellular = false,
+    netCapabilityInternet = false,
+    netCapabilityValidated = false,
 )

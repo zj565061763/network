@@ -19,7 +19,7 @@ abstract class FNetworkStateObserver {
     fun register() {
         _job?.let { return }
         _job = _scope.launch {
-            FNetwork.networkStateFlow.collect {
+            FNetwork.currentNetworkFlow.collect {
                 onChange(it)
             }
         }
@@ -44,7 +44,7 @@ abstract class FNetworkStateObserver {
  * 如果网络已连接，直接返回，否则挂起直到网络已连接
  */
 suspend fun fNetworkConnectedAwait() {
-    if (FNetwork.networkState.isConnected()) return
+    if (FNetwork.currentNetwork.isConnected()) return
     suspendCancellableCoroutine { continuation ->
         object : FNetworkStateObserver() {
             override fun onChange(networkState: NetworkState) {
