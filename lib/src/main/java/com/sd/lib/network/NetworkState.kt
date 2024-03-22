@@ -32,7 +32,7 @@ data class NetworkState(
     fun isCellular(): Boolean = this.transportCellular
 
     /**
-     * 网络是否已连接，注意：已连接不代表网络可用
+     * 网络是否已连接，已连接不代表网络一定可用
      */
     fun isConnected(): Boolean = this.netCapabilityInternet
 
