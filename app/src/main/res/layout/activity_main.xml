@@ -6,10 +6,10 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/btn_SampleNetworkObserver"
+        android:id="@+id/btn_SampleCurrentNetwork"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SampleNetworkObserver"
+        android:text="SampleCurrentNetwork"
         android:textAllCaps="false" />
 
     <Button

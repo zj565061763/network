@@ -5,18 +5,17 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_register"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_flow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="register"
-        android:textAllCaps="false" />
+        android:checked="false" />
 
-    <Button
-        android:id="@+id/btn_unregister"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_observer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="unregister"
-        android:textAllCaps="false" />
+        android:checked="false" />
+
 
 </LinearLayout>

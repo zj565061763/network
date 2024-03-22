@@ -12,8 +12,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
-        _binding.btnSampleNetworkObserver.setOnClickListener {
-            startActivity(Intent(this, SampleNetworkObserver::class.java))
+        _binding.btnSampleCurrentNetwork.setOnClickListener {
+            startActivity(Intent(this, SampleCurrentNetwork::class.java))
         }
         _binding.btnSampleNetworkAwait.setOnClickListener {
             startActivity(Intent(this, SampleNetworkAwait::class.java))
