@@ -88,8 +88,12 @@ internal class NetworksCallback(
     private fun updateCurrentNetwork() {
         val oldList = _allNetworksFlow.value
         if (oldList.isNullOrEmpty() || oldList.size == 1) {
-            val newList = listOf(_connectivityManager.currentNetworkState())
-            _allNetworksFlow.compareAndSet(oldList, newList)
+            val currentNetworkState = _connectivityManager.currentNetworkState()
+            if (currentNetworkState.netId.isEmpty()) {
+                _allNetworksFlow.compareAndSet(oldList, emptyList())
+            } else {
+                _allNetworksFlow.compareAndSet(oldList, listOf(currentNetworkState))
+            }
         }
     }
 
