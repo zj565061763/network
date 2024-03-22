@@ -65,7 +65,7 @@ class SampleCurrentNetwork : AppCompatActivity() {
                     $wifiOrCellular
                     isConnected:${networkState.isConnected()}
                     isAvailable:${networkState.isAvailable()}
-                    
+                     
                 """.trimIndent()
         }
     }
