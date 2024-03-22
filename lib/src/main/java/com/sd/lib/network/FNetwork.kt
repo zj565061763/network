@@ -1,7 +1,11 @@
 package com.sd.lib.network
 
 import com.sd.lib.ctx.fContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 object FNetwork {
     private val _callback = NetworksCallback(fContext)
@@ -20,5 +24,62 @@ object FNetwork {
 
     init {
         _callback.register()
+    }
+}
+
+/**
+ * 监听当前网络
+ */
+abstract class FNetworkObserver {
+    private val _scope = MainScope()
+    private var _job: Job? = null
+
+    /**
+     * 注册
+     */
+    @Synchronized
+    fun register() {
+        _job?.let { return }
+        _job = _scope.launch {
+            FNetwork.currentNetworkFlow.collect {
+                onChange(it)
+            }
+        }
+    }
+
+    /**
+     * 取消注册
+     */
+    @Synchronized
+    fun unregister() {
+        _job?.cancel()
+        _job = null
+    }
+
+    /**
+     * 网络状态变化(MainThread)
+     */
+    abstract fun onChange(networkState: NetworkState)
+}
+
+/**
+ * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
+ */
+suspend fun fNetworkAwait(
+    condition: (NetworkState) -> Boolean = { it.isConnected() }
+) {
+    if (condition(FNetwork.currentNetwork)) return
+    suspendCancellableCoroutine { continuation ->
+        object : FNetworkObserver() {
+            override fun onChange(networkState: NetworkState) {
+                if (condition(networkState)) {
+                    unregister()
+                    continuation.resumeWith(Result.success(Unit))
+                }
+            }
+        }.also { observer ->
+            observer.register()
+            continuation.invokeOnCancellation { observer.unregister() }
+        }
     }
 }
