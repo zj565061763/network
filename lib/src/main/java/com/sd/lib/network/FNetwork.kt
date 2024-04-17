@@ -8,9 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 object FNetwork {
-    @Volatile
-    private var _callback: NetworksCallback? = null
-
     /** 当前网络 */
     val currentNetwork: NetworkState
         get() = getCallback().currentNetwork
@@ -22,6 +19,9 @@ object FNetwork {
     /** 监听所有网络 */
     val allNetworksFlow: Flow<List<NetworkState>>
         get() = getCallback().allNetworksFlow
+
+    @Volatile
+    private var _callback: NetworksCallback? = null
 
     /**
      * 初始化
