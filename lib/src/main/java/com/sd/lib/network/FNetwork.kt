@@ -11,22 +11,17 @@ object FNetwork {
     @Volatile
     private var _callback: NetworksCallback? = null
 
-    private val initializedCallback: NetworksCallback
-        get() = _callback ?: synchronized(this@FNetwork) {
-            checkNotNull(_callback) { "You should call FNetwork.init() before this." }
-        }
-
     /** 当前网络 */
     val currentNetwork: NetworkState
-        get() = initializedCallback.currentNetwork
+        get() = getCallback().currentNetwork
 
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
-        get() = initializedCallback.currentNetworkFlow
+        get() = getCallback().currentNetworkFlow
 
     /** 监听所有网络 */
     val allNetworksFlow: Flow<List<NetworkState>>
-        get() = initializedCallback.allNetworksFlow
+        get() = getCallback().allNetworksFlow
 
     /**
      * 初始化
@@ -38,6 +33,12 @@ object FNetwork {
                 _callback = NetworksCallback(context.applicationContext)
                 _callback!!.init()
             }
+        }
+    }
+
+    private fun getCallback(): NetworksCallback {
+        return _callback ?: synchronized(this@FNetwork) {
+            checkNotNull(_callback) { "You should call FNetwork.init() before this." }
         }
     }
 }
