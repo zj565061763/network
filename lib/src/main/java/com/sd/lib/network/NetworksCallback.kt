@@ -48,7 +48,7 @@ internal class NetworksCallback(
 
         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
             super.onCapabilitiesChanged(network, networkCapabilities)
-            _networks[network] = network.toNetworkState(networkCapabilities)
+            _networks[network] = newNetworkState(network, networkCapabilities)
             _allNetworksFlow.value = _networks.values.toList()
         }
     }
@@ -117,12 +117,12 @@ internal class NetworksCallback(
 private fun ConnectivityManager.currentNetworkState(): NetworkState {
     val network = this.activeNetwork ?: return NetworkStateNone
     val capabilities = this.getNetworkCapabilities(network) ?: return NetworkStateNone
-    return network.toNetworkState(capabilities)
+    return newNetworkState(network, capabilities)
 }
 
-private fun Network.toNetworkState(networkCapabilities: NetworkCapabilities): NetworkState {
+private fun newNetworkState(network: Network, networkCapabilities: NetworkCapabilities): NetworkState {
     return NetworkState(
-        netId = this.toString(),
+        netId = network.toString(),
         transportWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
         transportCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
         netCapabilityInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
