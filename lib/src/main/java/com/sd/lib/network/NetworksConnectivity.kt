@@ -114,6 +114,7 @@ internal class NetworksConnectivity(
                 return target
             } else {
                 delay(1_000)
+                continue
             }
         }
     }
