@@ -35,9 +35,8 @@ object FNetwork {
         if (_callback != null) return
         synchronized(this@FNetwork) {
             if (_callback == null) {
-                val callback = NetworksCallback(context.applicationContext)
-                _callback = callback
-                callback.init()
+                _callback = NetworksCallback(context.applicationContext)
+                _callback!!.init()
             }
         }
     }
