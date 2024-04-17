@@ -115,8 +115,8 @@ internal class NetworksCallback(
 }
 
 private fun ConnectivityManager.currentNetworkState(): NetworkState {
-    val network = activeNetwork ?: return NetworkStateNone
-    val capabilities = getNetworkCapabilities(network) ?: return NetworkStateNone
+    val network = this.activeNetwork ?: return NetworkStateNone
+    val capabilities = this.getNetworkCapabilities(network) ?: return NetworkStateNone
     return network.toNetworkState(capabilities)
 }
 
