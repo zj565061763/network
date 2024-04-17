@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
 
 internal class NetworksCallback(
     context: Context
@@ -82,7 +81,7 @@ internal class NetworksCallback(
                 break
             } catch (e: RuntimeException) {
                 e.printStackTrace()
-                delay(1.seconds)
+                delay(1_000)
             } finally {
                 updateCurrentNetwork()
             }
@@ -112,7 +111,7 @@ internal class NetworksCallback(
         while (true) {
             val activeNetwork = _connectivityManager.activeNetwork
             if (activeNetwork == null) {
-                delay(1.seconds)
+                delay(1_000)
                 continue
             } else {
                 return list.firstOrNull { it.netId == activeNetwork.toString() }
