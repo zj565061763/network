@@ -75,8 +75,8 @@ internal class NetworksCallback(
         }
         _scope.launch {
             allNetworksFlow.collectLatest { list ->
-                list.filterCurrentNetwork()?.let {
-                    _currentNetworkFlow.value = it
+                filterCurrentNetwork(list)?.let { networkState ->
+                    _currentNetworkFlow.value = networkState
                 }
             }
         }
@@ -100,15 +100,15 @@ internal class NetworksCallback(
     /**
      * 筛选当前网络状态
      */
-    private suspend fun List<NetworkState>.filterCurrentNetwork(): NetworkState? {
-        if (this.isEmpty()) return NetworkStateNone
+    private suspend fun filterCurrentNetwork(list: List<NetworkState>): NetworkState? {
+        if (list.isEmpty()) return NetworkStateNone
         while (true) {
             val activeNetwork = _connectivityManager.activeNetwork
             if (activeNetwork == null) {
                 delay(1.seconds)
                 continue
             } else {
-                return this.firstOrNull { it.netId == activeNetwork.toString() }
+                return list.firstOrNull { it.netId == activeNetwork.toString() }
             }
         }
     }
