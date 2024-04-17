@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 object FNetwork {
-    @Volatile
     private var _callback: NetworksCallback? = null
 
     private val initializedCallback: NetworksCallback
@@ -30,7 +29,6 @@ object FNetwork {
      * 初始化
      */
     fun init(context: Context) {
-        if (_callback != null) return
         synchronized(this@FNetwork) {
             if (_callback == null) {
                 val callback = NetworksCallback(context.applicationContext)
