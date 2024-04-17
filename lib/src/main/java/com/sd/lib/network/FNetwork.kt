@@ -53,7 +53,7 @@ abstract class FNetworkObserver {
      */
     @Synchronized
     fun register() {
-        _job?.let { return }
+        if (_job != null) return
         _job = _scope.launch {
             FNetwork.currentNetworkFlow.collect {
                 onChange(it)
