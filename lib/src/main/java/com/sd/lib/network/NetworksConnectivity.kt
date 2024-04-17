@@ -108,9 +108,7 @@ internal class NetworksConnectivity(
         if (list.isEmpty()) return NetworkStateNone
         if (list.size == 1) return list.first()
         while (true) {
-            val target = list.find {
-                it.netId == _connectivityManager.activeNetwork?.netId()
-            }
+            val target = list.find { it.netId == _connectivityManager.activeNetwork?.netId() }
             if (target != null) {
                 return target
             } else {
