@@ -73,15 +73,23 @@ internal class NetworksConnectivity(
         val request = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
+
         while (true) {
-            try {
+            val register = try {
                 _connectivityManager.registerNetworkCallback(request, _networkCallback)
-                break
+                true
             } catch (e: RuntimeException) {
                 e.printStackTrace()
+                false
+            }
+
+            if (register) {
+                compareAndSetCurrentNetwork(null)
+                break
+            } else {
+                compareAndSetCurrentNetwork(_allNetworksFlow.value)
                 delay(1_000)
-            } finally {
-                updateCurrentNetwork()
+                continue
             }
         }
     }
@@ -89,15 +97,12 @@ internal class NetworksConnectivity(
     /**
      * 更新当前网络状态
      */
-    private fun updateCurrentNetwork() {
-        val oldList = _allNetworksFlow.value
-        if (oldList.isNullOrEmpty() || oldList.size == 1) {
-            val currentNetworkState = _connectivityManager.currentNetworkState()
-            if (currentNetworkState.netId.isEmpty()) {
-                _allNetworksFlow.compareAndSet(oldList, emptyList())
-            } else {
-                _allNetworksFlow.compareAndSet(oldList, listOf(currentNetworkState))
-            }
+    private fun compareAndSetCurrentNetwork(oldValue: List<NetworkState>?) {
+        val currentNetworkState = _connectivityManager.currentNetworkState()
+        if (currentNetworkState.netId.isEmpty()) {
+            _allNetworksFlow.compareAndSet(oldValue, emptyList())
+        } else {
+            _allNetworksFlow.compareAndSet(oldValue, listOf(currentNetworkState))
         }
     }
 
