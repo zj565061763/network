@@ -83,26 +83,22 @@ internal class NetworksConnectivity(
                 false
             }
 
+            val list = _connectivityManager.currentNetworkState().let { currentNetworkState ->
+                if (currentNetworkState.netId.isEmpty()) {
+                    emptyList()
+                } else {
+                    listOf(currentNetworkState)
+                }
+            }
+
             if (register) {
-                compareAndSetCurrentNetwork(null)
+                _allNetworksFlow.compareAndSet(null, list)
                 break
             } else {
-                compareAndSetCurrentNetwork(_allNetworksFlow.value)
+                _allNetworksFlow.value = list
                 delay(1_000)
                 continue
             }
-        }
-    }
-
-    /**
-     * 更新当前网络状态
-     */
-    private fun compareAndSetCurrentNetwork(expect: List<NetworkState>?) {
-        val currentNetworkState = _connectivityManager.currentNetworkState()
-        if (currentNetworkState.netId.isEmpty()) {
-            _allNetworksFlow.compareAndSet(expect, emptyList())
-        } else {
-            _allNetworksFlow.compareAndSet(expect, listOf(currentNetworkState))
         }
     }
 
