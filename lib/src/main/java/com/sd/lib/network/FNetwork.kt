@@ -77,7 +77,7 @@ suspend fun fNetworkAwait(
                     continuation.resumeWith(Result.success(Unit))
                 }
             }
-        }.also { observer ->
+        }.let { observer ->
             observer.register()
             continuation.invokeOnCancellation { observer.unregister() }
         }
