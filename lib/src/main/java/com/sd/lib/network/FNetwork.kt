@@ -31,7 +31,7 @@ object FNetwork {
      * 初始化
      */
     fun init(context: Context) {
-        _callback?.let { return }
+        if (_callback != null) return
         synchronized(this@FNetwork) {
             if (_callback == null) {
                 NetworksCallback(context.applicationContext).also { callback ->
