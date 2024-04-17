@@ -114,7 +114,7 @@ internal class NetworksCallback(
                 delay(1_000)
                 continue
             } else {
-                return list.firstOrNull { it.netId == activeNetwork.toString() }
+                return list.firstOrNull { it.netId == activeNetwork.netId() }
             }
         }
     }
@@ -131,10 +131,12 @@ private fun newNetworkState(
     networkCapabilities: NetworkCapabilities,
 ): NetworkState {
     return NetworkState(
-        netId = network.toString(),
+        netId = network.netId(),
         transportWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
         transportCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
         netCapabilityInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
         netCapabilityValidated = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
     )
 }
+
+private fun Network.netId(): String = this.toString()
