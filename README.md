@@ -62,7 +62,7 @@ lifecycleScope.launch {
 
 ```kotlin
 lifecycleScope.launch {
-    // 挂起直到网络已连接
+    // 默认情况下，如果网络未连接，会挂起直到网络已连接
     fNetworkAwait()
 }
 ```
