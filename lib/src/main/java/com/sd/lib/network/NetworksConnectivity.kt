@@ -97,12 +97,12 @@ internal class NetworksConnectivity(
     /**
      * 更新当前网络状态
      */
-    private fun compareAndSetCurrentNetwork(oldValue: List<NetworkState>?) {
+    private fun compareAndSetCurrentNetwork(expect: List<NetworkState>?) {
         val currentNetworkState = _connectivityManager.currentNetworkState()
         if (currentNetworkState.netId.isEmpty()) {
-            _allNetworksFlow.compareAndSet(oldValue, emptyList())
+            _allNetworksFlow.compareAndSet(expect, emptyList())
         } else {
-            _allNetworksFlow.compareAndSet(oldValue, listOf(currentNetworkState))
+            _allNetworksFlow.compareAndSet(expect, listOf(currentNetworkState))
         }
     }
 
