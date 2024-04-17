@@ -38,7 +38,7 @@ networkObserver.register()
 networkObserver.unregister()
 ```
 
-#### `Flow`监听
+#### Flow监听
 
 ```kotlin
 lifecycleScope.launch {
