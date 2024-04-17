@@ -8,10 +8,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 object FNetwork {
+    @Volatile
     private var _callback: NetworksCallback? = null
 
     private val initializedCallback: NetworksCallback
-        get() = checkNotNull(_callback) { "You should call FNetwork.init() before this." }
+        get() = _callback ?: synchronized(this@FNetwork) {
+            checkNotNull(_callback) { "You should call FNetwork.init() before this." }
+        }
 
     /** 当前网络 */
     val currentNetwork: NetworkState
@@ -29,6 +32,7 @@ object FNetwork {
      * 初始化
      */
     fun init(context: Context) {
+        if (_callback != null) return
         synchronized(this@FNetwork) {
             if (_callback == null) {
                 val callback = NetworksCallback(context.applicationContext)
