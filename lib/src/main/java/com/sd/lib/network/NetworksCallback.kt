@@ -120,7 +120,10 @@ private fun ConnectivityManager.currentNetworkState(): NetworkState {
     return newNetworkState(network, capabilities)
 }
 
-private fun newNetworkState(network: Network, networkCapabilities: NetworkCapabilities): NetworkState {
+private fun newNetworkState(
+    network: Network,
+    networkCapabilities: NetworkCapabilities,
+): NetworkState {
     return NetworkState(
         netId = network.toString(),
         transportWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
