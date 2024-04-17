@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -105,30 +106,34 @@ private fun ContentView(
     onFlowCheckedChange: (Boolean) -> Unit,
     onObserverCheckedChange: (Boolean) -> Unit,
 ) {
-    var flowChecked by remember { mutableStateOf(false) }
-    var observerChecked by remember { mutableStateOf(false) }
-
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
+        SwitchItem(text = "flow", onCheckedChange = onFlowCheckedChange)
+        Spacer(modifier = Modifier.height(50.dp))
+        SwitchItem(text = "observer", onCheckedChange = onObserverCheckedChange)
+    }
+}
 
+@Composable
+private fun SwitchItem(
+    modifier: Modifier = Modifier,
+    text: String,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    var checked by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(text = text)
         Switch(
-            checked = flowChecked,
+            checked = checked,
             onCheckedChange = {
-                flowChecked = it
-                onFlowCheckedChange(it)
-            },
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Switch(
-            checked = observerChecked,
-            onCheckedChange = {
-                observerChecked = it
-                onObserverCheckedChange(it)
+                checked = it
+                onCheckedChange(it)
             },
         )
     }
