@@ -11,9 +11,8 @@ object FNetwork {
     @Volatile
     private var _callback: NetworksCallback? = null
 
-    private val initializedCallback: NetworksCallback = checkNotNull(_callback) {
-        "You should call FNetwork.init() before this."
-    }
+    private val initializedCallback: NetworksCallback
+        get() = checkNotNull(_callback) { "You should call FNetwork.init() before this." }
 
     /** 当前网络 */
     val currentNetwork: NetworkState
