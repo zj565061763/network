@@ -22,7 +22,7 @@ internal class NetworksCallback(
     private val _connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val _scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private val _networks: MutableMap<Network, NetworkState> = hashMapOf()
+    private val _networks: MutableMap<Network, NetworkState> = mutableMapOf()
 
     private val _currentNetworkFlow = MutableStateFlow<NetworkState?>(null)
     private val _allNetworksFlow = MutableStateFlow<List<NetworkState>?>(null)
