@@ -10,35 +10,35 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 object FNetwork {
     /** 当前网络 */
     val currentNetwork: NetworkState
-        get() = getCallback().currentNetwork
+        get() = getNetworksConnectivity().currentNetwork
 
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
-        get() = getCallback().currentNetworkFlow
+        get() = getNetworksConnectivity().currentNetworkFlow
 
     /** 监听所有网络 */
     val allNetworksFlow: Flow<List<NetworkState>>
-        get() = getCallback().allNetworksFlow
+        get() = getNetworksConnectivity().allNetworksFlow
 
     @Volatile
-    private var _callback: NetworksCallback? = null
+    private var _networksConnectivity: NetworksConnectivity? = null
 
     /**
      * 初始化
      */
     fun init(context: Context) {
-        if (_callback != null) return
+        if (_networksConnectivity != null) return
         synchronized(this@FNetwork) {
-            if (_callback == null) {
-                _callback = NetworksCallback(context.applicationContext)
-                _callback!!.init()
+            if (_networksConnectivity == null) {
+                _networksConnectivity = NetworksConnectivity(context.applicationContext)
+                _networksConnectivity!!.init()
             }
         }
     }
 
-    private fun getCallback(): NetworksCallback {
-        return _callback ?: synchronized(this@FNetwork) {
-            checkNotNull(_callback) { "You should call FNetwork.init() before this." }
+    private fun getNetworksConnectivity(): NetworksConnectivity {
+        return _networksConnectivity ?: synchronized(this@FNetwork) {
+            checkNotNull(_networksConnectivity) { "You should call FNetwork.init() before this." }
         }
     }
 }
