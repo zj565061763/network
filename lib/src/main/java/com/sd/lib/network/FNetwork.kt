@@ -1,6 +1,6 @@
 package com.sd.lib.network
 
-import com.sd.lib.ctx.fContext
+import android.content.Context
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
@@ -8,22 +8,38 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 object FNetwork {
-    private val _callback = NetworksCallback(fContext)
+    @Volatile
+    private var _callback: NetworksCallback? = null
+
+    private val initializedCallback: NetworksCallback = checkNotNull(_callback) {
+        "You should call FNetwork.init() before this."
+    }
 
     /** 当前网络 */
     val currentNetwork: NetworkState
-        get() = _callback.currentNetwork
+        get() = initializedCallback.currentNetwork
 
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
-        get() = _callback.currentNetworkFlow
+        get() = initializedCallback.currentNetworkFlow
 
     /** 监听所有网络 */
     val allNetworksFlow: Flow<List<NetworkState>>
-        get() = _callback.allNetworksFlow
+        get() = initializedCallback.allNetworksFlow
 
-    init {
-        _callback.register()
+    /**
+     * 初始化
+     */
+    fun init(context: Context) {
+        _callback?.let { return }
+        synchronized(this@FNetwork) {
+            if (_callback == null) {
+                NetworksCallback(context.applicationContext).also { callback ->
+                    _callback = callback
+                    callback.register()
+                }
+            }
+        }
     }
 }
 
