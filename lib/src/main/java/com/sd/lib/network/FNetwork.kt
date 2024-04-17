@@ -35,7 +35,7 @@ object FNetwork {
             if (_callback == null) {
                 val callback = NetworksCallback(context.applicationContext)
                 _callback = callback
-                callback.register()
+                callback.init()
             }
         }
     }

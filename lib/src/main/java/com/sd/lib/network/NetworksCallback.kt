@@ -54,30 +54,37 @@ internal class NetworksCallback(
     }
 
     /**
-     * 注册回调对象
+     * 初始化
      */
-    fun register() {
+    fun init() {
         _scope.launch {
-            val request = NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .build()
-            while (true) {
-                try {
-                    _connectivityManager.registerNetworkCallback(request, _networkCallback)
-                    break
-                } catch (e: RuntimeException) {
-                    e.printStackTrace()
-                    delay(1.seconds)
-                } finally {
-                    updateCurrentNetwork()
-                }
-            }
+            registerNetworkCallback()
         }
         _scope.launch {
             allNetworksFlow.collectLatest { list ->
                 filterCurrentNetwork(list)?.let { networkState ->
                     _currentNetworkFlow.value = networkState
                 }
+            }
+        }
+    }
+
+    /**
+     * 注册网络监听
+     */
+    private suspend fun registerNetworkCallback() {
+        val request = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        while (true) {
+            try {
+                _connectivityManager.registerNetworkCallback(request, _networkCallback)
+                break
+            } catch (e: RuntimeException) {
+                e.printStackTrace()
+                delay(1.seconds)
+            } finally {
+                updateCurrentNetwork()
             }
         }
     }
