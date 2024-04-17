@@ -1,19 +1,15 @@
 package com.sd.demo.network
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
-import com.sd.demo.network.databinding.SampleAllNetworksBinding
 import com.sd.lib.network.FNetwork
 import kotlinx.coroutines.launch
 
-class SampleAllNetworks : AppCompatActivity() {
-    private val _binding by lazy { SampleAllNetworksBinding.inflate(layoutInflater) }
+class SampleAllNetworks : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(_binding.root)
-
         lifecycleScope.launch {
             // 监听所有网络
             FNetwork.allNetworksFlow.collect { list ->

@@ -5,16 +5,33 @@ androidCompileSdk = "34"
 androidGradlePlugin = "8.3.2"
 kotlin = "1.9.23"
 
+compose = "1.6.5"
+composeCompiler = "1.5.11"
+composeMaterial3 = "1.2.1"
+
+lifecycle = "2.7.0"
+
 [libraries]
 
-androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
-androidx-lifecycle-viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 
-kotlin-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "composeMaterial3" }
+androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose" }
+androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "compose" }
+
+androidx-activity-compose = "androidx.activity:activity-compose:1.8.2"
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
 junit = "junit:junit:4.13.2"
 androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
 androidx-test-espresso-core = "androidx.test.espresso:espresso-core:3.5.1"
+
+kotlin-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
 
 [plugins]
 
