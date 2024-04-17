@@ -60,7 +60,7 @@ private fun Content(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(
-            listActivity,
+            items = listActivity,
             key = { it },
         ) { item ->
             Button(
