@@ -31,6 +31,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.androidx.startup)
     implementation(libs.kotlin.coroutines)
 }
 

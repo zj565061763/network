@@ -83,7 +83,7 @@ abstract class FNetworkObserver {
  * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
  */
 suspend fun fNetworkAwait(
-    condition: (NetworkState) -> Boolean = { it.isConnected() }
+    condition: (NetworkState) -> Boolean = { it.isConnected() },
 ) {
     if (condition(FNetwork.currentNetwork)) return
     suspendCancellableCoroutine { continuation ->
