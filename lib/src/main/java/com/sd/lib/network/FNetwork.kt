@@ -1,6 +1,7 @@
 package com.sd.lib.network
 
 import android.content.Context
+import android.net.ConnectivityManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +31,9 @@ object FNetwork {
         if (_networksConnectivity != null) return
         synchronized(this@FNetwork) {
             if (_networksConnectivity == null) {
-                _networksConnectivity = NetworksConnectivity(context)
+                _networksConnectivity = NetworksConnectivity(
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                )
                 _networksConnectivity!!.init()
             }
         }
