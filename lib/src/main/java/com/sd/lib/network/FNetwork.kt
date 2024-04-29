@@ -30,7 +30,7 @@ object FNetwork {
         if (_networksConnectivity != null) return
         synchronized(this@FNetwork) {
             if (_networksConnectivity == null) {
-                _networksConnectivity = NetworksConnectivity(context.applicationContext)
+                _networksConnectivity = NetworksConnectivity(context)
                 _networksConnectivity!!.init()
             }
         }
