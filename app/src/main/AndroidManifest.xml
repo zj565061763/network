@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SampleCurrentNetwork" android:process=":New" />
+        <activity android:name=".SampleCurrentNetwork" />
         <activity android:name=".SampleNetworkAwait" />
         <activity android:name=".SampleAllNetworks" />
 
