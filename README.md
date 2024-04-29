@@ -1,12 +1,17 @@
 [![](https://jitpack.io/v/zj565061763/network.svg)](https://jitpack.io/#zj565061763/network)
 
+# 关于
+
+默认在主进程自动初始化，如果要在其他进程使用，需要在其他进程手动初始化。
+
+```kotlin
+// 初始化
+FNetwork.init(context)
+```
+
 # 常用方法
 
 ```kotlin
-
-// 初始化
-FNetwork.init(context)
-
 // 当前网络是否已连接，已连接不代表网络一定可用
 FNetwork.currentNetwork.isConnected()
 
