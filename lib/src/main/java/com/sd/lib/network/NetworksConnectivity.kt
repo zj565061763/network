@@ -1,6 +1,5 @@
 package com.sd.lib.network
 
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -16,9 +15,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 internal class NetworksConnectivity(
-    context: Context
+    private val manager: ConnectivityManager,
 ) {
-    private val _connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val _scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val _networks = mutableMapOf<Network, NetworkState>()
@@ -28,7 +26,7 @@ internal class NetworksConnectivity(
 
     /** 当前网络 */
     val currentNetwork: NetworkState
-        get() = _connectivityManager.currentNetworkState()
+        get() = manager.currentNetworkState()
 
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
@@ -76,14 +74,14 @@ internal class NetworksConnectivity(
 
         while (true) {
             val register = try {
-                _connectivityManager.registerNetworkCallback(request, _networkCallback)
+                manager.registerNetworkCallback(request, _networkCallback)
                 true
             } catch (e: RuntimeException) {
                 e.printStackTrace()
                 false
             }
 
-            val list = _connectivityManager.currentNetworkState().let { currentNetworkState ->
+            val list = manager.currentNetworkState().let { currentNetworkState ->
                 if (currentNetworkState.netId.isEmpty()) {
                     emptyList()
                 } else {
@@ -109,7 +107,7 @@ internal class NetworksConnectivity(
         if (list.isEmpty()) return NetworkStateNone
         if (list.size == 1) return list.first()
         while (true) {
-            val target = list.find { it.netId == _connectivityManager.activeNetwork?.netId() }
+            val target = list.find { it.netId == manager.activeNetwork?.netId() }
             if (target != null) {
                 return target
             } else {

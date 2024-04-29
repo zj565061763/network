@@ -1,6 +1,7 @@
 package com.sd.lib.network
 
 import android.content.Context
+import android.net.ConnectivityManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +31,9 @@ object FNetwork {
         if (_networksConnectivity != null) return
         synchronized(this@FNetwork) {
             if (_networksConnectivity == null) {
-                _networksConnectivity = NetworksConnectivity(context.applicationContext)
+                _networksConnectivity = NetworksConnectivity(
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                )
                 _networksConnectivity!!.init()
             }
         }
@@ -83,7 +86,7 @@ abstract class FNetworkObserver {
  * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
  */
 suspend fun fNetworkAwait(
-    condition: (NetworkState) -> Boolean = { it.isConnected() }
+    condition: (NetworkState) -> Boolean = { it.isConnected() },
 ) {
     if (condition(FNetwork.currentNetwork)) return
     suspendCancellableCoroutine { continuation ->

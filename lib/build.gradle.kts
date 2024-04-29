@@ -6,7 +6,7 @@ plugins {
 
 val libGroupId = "com.sd.lib.android"
 val libArtifactId = "network"
-val libVersionName = "1.4.0"
+val libVersionName = "1.5.0"
 
 android {
     namespace = "com.sd.lib.network"
@@ -31,6 +31,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.androidx.startup)
     implementation(libs.kotlin.coroutines)
 }
 
