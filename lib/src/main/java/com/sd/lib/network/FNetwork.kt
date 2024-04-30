@@ -1,5 +1,6 @@
 package com.sd.lib.network
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import kotlinx.coroutines.Job
@@ -8,40 +9,35 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
+@SuppressLint("StaticFieldLeak")
 object FNetwork {
     /** 当前网络 */
     val currentNetwork: NetworkState
-        get() = getNetworksConnectivity().currentNetwork
+        get() = _networksConnectivity.currentNetwork
 
     /** 监听当前网络 */
     val currentNetworkFlow: Flow<NetworkState>
-        get() = getNetworksConnectivity().currentNetworkFlow
+        get() = _networksConnectivity.currentNetworkFlow
 
     /** 监听所有网络 */
     val allNetworksFlow: Flow<List<NetworkState>>
-        get() = getNetworksConnectivity().allNetworksFlow
+        get() = _networksConnectivity.allNetworksFlow
 
     @Volatile
-    private var _networksConnectivity: NetworksConnectivity? = null
+    private var _context: Context? = null
+
+    private val _networksConnectivity by lazy {
+        val context = _context ?: error("You should call FNetwork.init() before this.")
+        val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        NetworksConnectivity(manager).also { it.init() }
+    }
 
     /**
      * 初始化
      */
     fun init(context: Context) {
-        if (_networksConnectivity != null) return
-        synchronized(this@FNetwork) {
-            if (_networksConnectivity == null) {
-                _networksConnectivity = NetworksConnectivity(
-                    context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                )
-                _networksConnectivity!!.init()
-            }
-        }
-    }
-
-    private fun getNetworksConnectivity(): NetworksConnectivity {
-        return _networksConnectivity ?: synchronized(this@FNetwork) {
-            checkNotNull(_networksConnectivity) { "You should call FNetwork.init() before this." }
+        context.applicationContext?.let { appContext ->
+            _context = appContext
         }
     }
 }
