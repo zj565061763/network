@@ -6,7 +6,7 @@ plugins {
 
 val libGroupId = "com.sd.lib.android"
 val libArtifactId = "network"
-val libVersionName = "1.5.2"
+val libVersionName = "1.5.3"
 
 android {
     namespace = "com.sd.lib.network"
@@ -22,7 +22,6 @@ android {
     publishing {
         singleVariant("release") {
             withSourcesJar()
-            withJavadocJar()
         }
     }
 }
@@ -33,7 +32,7 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.startup)
-    implementation(libs.kotlin.coroutines)
+    api(libs.kotlin.coroutines)
 }
 
 publishing {
