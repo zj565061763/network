@@ -32,7 +32,7 @@ androidx-test-ext-junit = "androidx.test.ext:junit:1.1.5"
 androidx-test-espresso-core = "androidx.test.espresso:espresso-core:3.5.1"
 
 androidx-startup = "androidx.startup:startup-runtime:1.1.1"
-kotlin-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
+kotlinx-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
 
 [plugins]
 

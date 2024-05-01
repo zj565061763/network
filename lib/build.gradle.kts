@@ -32,7 +32,7 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.startup)
-    api(libs.kotlin.coroutines)
+    api(libs.kotlinx.coroutines)
 }
 
 publishing {
