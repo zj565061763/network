@@ -32,7 +32,7 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.startup)
-    api(libs.kotlinx.coroutines)
+    implementation(libs.kotlinx.coroutines)
 }
 
 publishing {
@@ -41,7 +41,6 @@ publishing {
             groupId = libGroupId
             artifactId = libArtifactId
             version = libVersionName
-
             afterEvaluate {
                 from(components["release"])
             }
