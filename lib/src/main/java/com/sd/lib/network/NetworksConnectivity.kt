@@ -10,43 +10,38 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 internal class NetworksConnectivity(
    private val manager: ConnectivityManager,
 ) {
    private val _scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
    private val _networks = mutableMapOf<Network, NetworkState>()
-
-   private val _currentNetworkFlow = MutableStateFlow<NetworkState?>(null)
-   private val _allNetworksFlow = MutableStateFlow<List<NetworkState>?>(null)
+   private val _networksFlow = MutableStateFlow<List<NetworkState>?>(null)
 
    /** 当前网络 */
    val currentNetwork: NetworkState
       get() = manager.currentNetworkState() ?: NetworkStateNone
 
-   /** 监听当前网络 */
-   val currentNetworkFlow: Flow<NetworkState>
-      get() = _currentNetworkFlow.filterNotNull()
-
    /** 监听所有网络 */
-   val allNetworksFlow: Flow<List<NetworkState>>
-      get() = _allNetworksFlow.filterNotNull()
+   val allNetworksFlow: Flow<List<NetworkState>> = _networksFlow.filterNotNull()
+
+   /** 监听当前网络 */
+   val currentNetworkFlow: Flow<NetworkState> = allNetworksFlow.map(::filterCurrentNetwork)
 
    private val _networkCallback = object : ConnectivityManager.NetworkCallback() {
       override fun onLost(network: Network) {
          super.onLost(network)
          _networks.remove(network)
-         _allNetworksFlow.value = _networks.values.toList()
+         _networksFlow.value = _networks.values.toList()
       }
 
       override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
          super.onCapabilitiesChanged(network, networkCapabilities)
          _networks[network] = newNetworkState(network, networkCapabilities)
-         _allNetworksFlow.value = _networks.values.toList()
+         _networksFlow.value = _networks.values.toList()
       }
    }
 
@@ -56,11 +51,6 @@ internal class NetworksConnectivity(
    fun init() {
       _scope.launch {
          registerNetworkCallback()
-      }
-      _scope.launch {
-         allNetworksFlow.collectLatest { list ->
-            _currentNetworkFlow.value = filterCurrentNetwork(list)
-         }
       }
    }
 
@@ -91,10 +81,10 @@ internal class NetworksConnectivity(
 
          if (register) {
             // registerNetworkCallback的时候可能已经回调了网络状态，所以这里要用compareAndSet
-            _allNetworksFlow.compareAndSet(null, list)
+            _networksFlow.compareAndSet(null, list)
             break
          } else {
-            _allNetworksFlow.value = list
+            _networksFlow.value = list
             delay(1_000)
             continue
          }
