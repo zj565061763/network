@@ -6,12 +6,14 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 internal class NetworksConnectivity(
@@ -29,7 +31,10 @@ internal class NetworksConnectivity(
    val allNetworksFlow: Flow<List<NetworkState>> = _networksFlow.filterNotNull()
 
    /** 监听当前网络 */
-   val currentNetworkFlow: Flow<NetworkState> = allNetworksFlow.map(::filterCurrentNetwork)
+   @OptIn(ExperimentalCoroutinesApi::class)
+   val currentNetworkFlow: Flow<NetworkState> = allNetworksFlow
+      .mapLatest(::filterCurrentNetwork)
+      .flowOn(Dispatchers.IO)
 
    private val _networkCallback = object : ConnectivityManager.NetworkCallback() {
       override fun onLost(network: Network) {
