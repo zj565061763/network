@@ -14,59 +14,51 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sd.demo.network.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            AppTheme {
-                Content(
-                    listActivity = listOf(
-                        SampleCurrentNetwork::class.java,
-                        SampleAllNetworks::class.java,
-                        SampleNetworkAwait::class.java,
-                    ),
-                    onClickActivity = {
-                        startActivity(Intent(this, it))
-                    },
-                )
-            }
-        }
-    }
+   override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
+      setContent {
+         AppTheme {
+            Content(
+               listActivity = listOf(
+                  SampleCurrentNetwork::class.java,
+                  SampleAllNetworks::class.java,
+                  SampleNetworkAwait::class.java,
+               ),
+               onClickActivity = {
+                  startActivity(Intent(this, it))
+               },
+            )
+         }
+      }
+   }
 }
 
 @Composable
 private fun Content(
-    listActivity: List<Class<out Activity>>,
-    onClickActivity: (Class<out Activity>) -> Unit,
+   listActivity: List<Class<out Activity>>,
+   onClickActivity: (Class<out Activity>) -> Unit,
 ) {
-    val onClickActivityUpdated by rememberUpdatedState(onClickActivity)
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        items(
-            items = listActivity,
-            key = { it },
-        ) { item ->
-            Button(
-                onClick = { onClickActivityUpdated(item) }
-            ) {
-                Text(text = item.simpleName)
-            }
-        }
-    }
+   LazyColumn(
+      modifier = Modifier
+         .fillMaxSize()
+         .statusBarsPadding(),
+      verticalArrangement = Arrangement.spacedBy(5.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+   ) {
+      items(listActivity) { item ->
+         Button(onClick = { onClickActivity(item) }) {
+            Text(text = item.simpleName)
+         }
+      }
+   }
 }
 
 inline fun logMsg(block: () -> Any?) {
-    Log.i("network-demo", block().toString())
+   Log.i("network-demo", block().toString())
 }

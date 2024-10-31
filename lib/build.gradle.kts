@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    `maven-publish`
+   id("com.android.library")
+   id("org.jetbrains.kotlin.android")
+   `maven-publish`
 }
 
 val libGroupId = "com.sd.lib.android"
@@ -9,41 +9,41 @@ val libArtifactId = "network"
 val libVersionName = "1.5.3"
 
 android {
-    namespace = "com.sd.lib.network"
-    compileSdk = libs.versions.androidCompileSdk.get().toInt()
-    defaultConfig {
-        minSdk = 23
-    }
+   namespace = "com.sd.lib.network"
+   compileSdk = libs.versions.androidCompileSdk.get().toInt()
+   defaultConfig {
+      minSdk = 23
+   }
 
-    kotlinOptions {
-        freeCompilerArgs += "-module-name=$libGroupId.$libArtifactId"
-    }
+   kotlinOptions {
+      freeCompilerArgs += "-module-name=$libGroupId.$libArtifactId"
+   }
 
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
+   publishing {
+      singleVariant("release") {
+         withSourcesJar()
+      }
+   }
 }
 
 kotlin {
-    jvmToolchain(8)
+   jvmToolchain(8)
 }
 
 dependencies {
-    implementation(libs.androidx.startup)
-    implementation(libs.kotlinx.coroutines)
+   implementation(libs.androidx.startup)
+   implementation(libs.kotlinx.coroutines)
 }
 
 publishing {
-    publications {
-        create<MavenPublication>("release") {
-            groupId = libGroupId
-            artifactId = libArtifactId
-            version = libVersionName
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
+   publications {
+      create<MavenPublication>("release") {
+         groupId = libGroupId
+         artifactId = libArtifactId
+         version = libVersionName
+         afterEvaluate {
+            from(components["release"])
+         }
+      }
+   }
 }

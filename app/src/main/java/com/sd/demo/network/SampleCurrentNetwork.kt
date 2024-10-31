@@ -26,115 +26,115 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SampleCurrentNetwork : ComponentActivity() {
-    private var _flowJob: Job? = null
+   private var _flowJob: Job? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            AppTheme {
-                ContentView(
-                    onFlowCheckedChange = {
-                        handleFlowChangedChange(it)
-                    },
-                    onObserverCheckedChange = {
-                        handleObserverChangedChange(it)
-                    },
-                )
+   override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
+      setContent {
+         AppTheme {
+            ContentView(
+               onFlowCheckedChange = {
+                  handleFlowChangedChange(it)
+               },
+               onObserverCheckedChange = {
+                  handleObserverChangedChange(it)
+               },
+            )
+         }
+      }
+   }
+
+   private fun handleFlowChangedChange(checked: Boolean) {
+      _flowJob?.cancel()
+      if (checked) {
+         _flowJob = lifecycleScope.launch {
+            // 监听当前网络Flow
+            FNetwork.currentNetworkFlow.collect { networkState ->
+               log(networkState, "flow")
             }
-        }
-    }
+         }
+      }
+   }
 
-    private fun handleFlowChangedChange(checked: Boolean) {
-        _flowJob?.cancel()
-        if (checked) {
-            _flowJob = lifecycleScope.launch {
-                // 监听当前网络Flow
-                FNetwork.currentNetworkFlow.collect { networkState ->
-                    log(networkState, "flow")
-                }
-            }
-        }
-    }
+   private fun handleObserverChangedChange(checked: Boolean) {
+      if (checked) {
+         // 注册观察者
+         _observer.register()
+      } else {
+         // 取消注册观察者
+         _observer.unregister()
+      }
+   }
 
-    private fun handleObserverChangedChange(checked: Boolean) {
-        if (checked) {
-            // 注册观察者
-            _observer.register()
-        } else {
-            // 取消注册观察者
-            _observer.unregister()
-        }
-    }
+   private val _observer = object : FNetworkObserver() {
+      override fun onChange(networkState: NetworkState) {
+         log(networkState, "observer")
+      }
+   }
 
-    private val _observer = object : FNetworkObserver() {
-        override fun onChange(networkState: NetworkState) {
-            log(networkState, "observer")
-        }
-    }
+   /**
+    * 打印网络信息
+    */
+   private fun log(networkState: NetworkState, tag: String) {
+      val wifiOrCellular = when {
+         networkState.isWifi() -> "Wifi"
+         networkState.isCellular() -> "Cellular"
+         else -> "None"
+      }
 
-    /**
-     * 打印网络信息
-     */
-    private fun log(networkState: NetworkState, tag: String) {
-        val wifiOrCellular = when {
-            networkState.isWifi() -> "Wifi"
-            networkState.isCellular() -> "Cellular"
-            else -> "None"
-        }
-
-        logMsg {
-            """
+      logMsg {
+         """
                     $tag $wifiOrCellular
                     netId:${networkState.netId}
                     isConnected:${networkState.isConnected()}
                     isAvailable:${networkState.isAvailable()}
                      
                 """.trimIndent()
-        }
-    }
+      }
+   }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // 取消注册观察者
-        _observer.unregister()
-    }
+   override fun onDestroy() {
+      super.onDestroy()
+      // 取消注册观察者
+      _observer.unregister()
+   }
 }
 
 @Composable
 private fun ContentView(
-    modifier: Modifier = Modifier,
-    onFlowCheckedChange: (Boolean) -> Unit,
-    onObserverCheckedChange: (Boolean) -> Unit,
+   modifier: Modifier = Modifier,
+   onFlowCheckedChange: (Boolean) -> Unit,
+   onObserverCheckedChange: (Boolean) -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        SwitchItem(text = "flow", onCheckedChange = onFlowCheckedChange)
-        Spacer(modifier = Modifier.height(50.dp))
-        SwitchItem(text = "observer", onCheckedChange = onObserverCheckedChange)
-    }
+   Column(
+      modifier = modifier.fillMaxSize(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+   ) {
+      SwitchItem(text = "flow", onCheckedChange = onFlowCheckedChange)
+      Spacer(modifier = Modifier.height(50.dp))
+      SwitchItem(text = "observer", onCheckedChange = onObserverCheckedChange)
+   }
 }
 
 @Composable
 private fun SwitchItem(
-    modifier: Modifier = Modifier,
-    text: String,
-    onCheckedChange: (Boolean) -> Unit,
+   modifier: Modifier = Modifier,
+   text: String,
+   onCheckedChange: (Boolean) -> Unit,
 ) {
-    var checked by remember { mutableStateOf(false) }
+   var checked by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = text)
-        Switch(
-            checked = checked,
-            onCheckedChange = {
-                checked = it
-                onCheckedChange(it)
-            },
-        )
-    }
+   Column(
+      modifier = modifier,
+      horizontalAlignment = Alignment.CenterHorizontally,
+   ) {
+      Text(text = text)
+      Switch(
+         checked = checked,
+         onCheckedChange = {
+            checked = it
+            onCheckedChange(it)
+         },
+      )
+   }
 }

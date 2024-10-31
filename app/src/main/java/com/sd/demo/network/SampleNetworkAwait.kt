@@ -18,40 +18,40 @@ import java.util.UUID
 
 class SampleNetworkAwait : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            AppTheme {
-                ContentView(
-                    onClickLaunch = {
-                        lifecycleScope.launch {
-                            launchNetWorkAwait()
-                        }
-                    }
-                )
-            }
-        }
-    }
+   override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
+      setContent {
+         AppTheme {
+            ContentView(
+               onClickLaunch = {
+                  lifecycleScope.launch {
+                     launchNetWorkAwait()
+                  }
+               }
+            )
+         }
+      }
+   }
 
-    private suspend fun launchNetWorkAwait() {
-        val uuid = UUID.randomUUID().toString()
-        logMsg { "start $uuid" }
-        fNetworkAwait()
-        logMsg { "finish $uuid" }
-    }
+   private suspend fun launchNetWorkAwait() {
+      val uuid = UUID.randomUUID().toString()
+      logMsg { "start $uuid" }
+      fNetworkAwait()
+      logMsg { "finish $uuid" }
+   }
 }
 
 @Composable
 private fun ContentView(
-    modifier: Modifier = Modifier,
-    onClickLaunch: () -> Unit,
+   modifier: Modifier = Modifier,
+   onClickLaunch: () -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Button(onClick = onClickLaunch) {
-            Text(text = "launch")
-        }
-    }
+   Column(
+      modifier = modifier.fillMaxSize(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+   ) {
+      Button(onClick = onClickLaunch) {
+         Text(text = "launch")
+      }
+   }
 }
