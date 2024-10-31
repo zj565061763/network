@@ -42,7 +42,7 @@ object FNetwork {
 /**
  * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
  */
-suspend fun fNetworkAwait(
+suspend fun fNetwork(
    condition: (NetworkState) -> Boolean = { it.isConnected() },
 ) {
    if (condition(FNetwork.currentNetwork)) return

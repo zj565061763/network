@@ -12,11 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.sd.demo.network.theme.AppTheme
-import com.sd.lib.network.fNetworkAwait
+import com.sd.lib.network.fNetwork
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class SampleNetworkAwait : ComponentActivity() {
+class SampleWaitNetwork : ComponentActivity() {
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       setContent {
@@ -34,7 +34,7 @@ class SampleNetworkAwait : ComponentActivity() {
       val uuid = UUID.randomUUID().toString()
       runCatching {
          logMsg { "$uuid start" }
-         fNetworkAwait()
+         fNetwork()
       }.onSuccess {
          logMsg { "$uuid onSuccess" }
       }.onFailure {

@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                   SampleNetworkObserver::class.java,
                   SampleCurrentNetworkFlow::class.java,
                   SampleAllNetworks::class.java,
-                  SampleNetworkAwait::class.java,
+                  SampleWaitNetwork::class.java,
                ),
                onClickActivity = {
                   startActivity(Intent(this, it))
