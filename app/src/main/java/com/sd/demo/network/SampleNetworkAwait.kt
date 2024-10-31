@@ -32,9 +32,14 @@ class SampleNetworkAwait : ComponentActivity() {
 
    private suspend fun launchNetWorkAwait() {
       val uuid = UUID.randomUUID().toString()
-      logMsg { "$uuid start" }
-      fNetworkAwait()
-      logMsg { "$uuid finish" }
+      runCatching {
+         logMsg { "$uuid start" }
+         fNetworkAwait()
+      }.onSuccess {
+         logMsg { "$uuid onSuccess" }
+      }.onFailure {
+         logMsg { "$uuid onFailure $it" }
+      }
    }
 }
 
