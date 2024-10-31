@@ -17,18 +17,15 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class SampleNetworkAwait : ComponentActivity() {
-
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       setContent {
          AppTheme {
-            ContentView(
-               onClickLaunch = {
-                  lifecycleScope.launch {
-                     launchNetWorkAwait()
-                  }
+            ContentView {
+               lifecycleScope.launch {
+                  launchNetWorkAwait()
                }
-            )
+            }
          }
       }
    }
