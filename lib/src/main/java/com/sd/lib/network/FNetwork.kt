@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.flow.first
 
 @SuppressLint("StaticFieldLeak")
 object FNetwork {
@@ -46,17 +46,7 @@ suspend fun fNetworkAwait(
    condition: (NetworkState) -> Boolean = { it.isConnected() },
 ) {
    if (condition(FNetwork.currentNetwork)) return
-   suspendCancellableCoroutine { continuation ->
-      object : FNetworkObserver() {
-         override fun onChange(networkState: NetworkState) {
-            if (condition(networkState)) {
-               unregister()
-               continuation.resumeWith(Result.success(Unit))
-            }
-         }
-      }.let { observer ->
-         observer.register()
-         continuation.invokeOnCancellation { observer.unregister() }
-      }
+   FNetwork.currentNetworkFlow.first { networkState ->
+      condition(networkState)
    }
 }
