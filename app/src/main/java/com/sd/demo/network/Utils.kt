@@ -18,6 +18,7 @@ fun NetworkState.log() {
          netId:${netId}
          isConnected:${isConnected()}
          isAvailable:${isAvailable()}
+         ${toString()}
       """.trimIndent()
    }
 }
