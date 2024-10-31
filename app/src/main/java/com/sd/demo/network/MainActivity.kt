@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
             Content(
                listActivity = listOf(
                   SampleNetworkObserver::class.java,
-                  SampleCurrentNetwork::class.java,
+                  SampleCurrentNetworkFlow::class.java,
                   SampleAllNetworks::class.java,
                   SampleNetworkAwait::class.java,
                ),
