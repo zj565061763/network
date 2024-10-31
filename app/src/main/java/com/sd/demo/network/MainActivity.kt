@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
                listActivity = listOf(
                   SampleNetworkObserver::class.java,
                   SampleCurrentNetworkFlow::class.java,
-                  SampleAllNetworks::class.java,
                   SampleWaitNetwork::class.java,
+                  SampleAllNetworks::class.java,
                ),
                onClickActivity = {
                   startActivity(Intent(this, it))
