@@ -11,6 +11,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
@@ -34,6 +35,7 @@ internal class NetworksConnectivity(
    @OptIn(ExperimentalCoroutinesApi::class)
    val currentNetworkFlow: Flow<NetworkState> = allNetworksFlow
       .mapLatest(::filterCurrentNetwork)
+      .distinctUntilChanged()
       .flowOn(Dispatchers.IO)
 
    private val _networkCallback = object : ConnectivityManager.NetworkCallback() {
