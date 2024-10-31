@@ -40,16 +40,19 @@ internal class NetworksConnectivity(
       override fun onLost(network: Network) {
          super.onLost(network)
          _networks.remove(network)
-         _networksFlow.value = _networks.values.toList()
+         syncNetworksFlow()
       }
 
       override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
          super.onCapabilitiesChanged(network, networkCapabilities)
          _networks[network] = newNetworkState(network, networkCapabilities)
+         syncNetworksFlow()
+      }
+
+      private fun syncNetworksFlow() {
          _networksFlow.value = _networks.values.toList()
       }
    }
-
 
    /**
     * 注册网络监听
