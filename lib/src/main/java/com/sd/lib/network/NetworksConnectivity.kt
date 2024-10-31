@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 internal class NetworksConnectivity(
    private val manager: ConnectivityManager,
-   private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+   scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
 ) {
    private val _networks = mutableMapOf<Network, NetworkState>()
    private val _networksFlow = MutableStateFlow<List<NetworkState>?>(null)
