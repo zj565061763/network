@@ -96,7 +96,6 @@ internal class NetworksConnectivity(
     */
    private suspend fun filterCurrentNetwork(list: List<NetworkState>): NetworkState {
       if (list.isEmpty()) return NetworkStateNone
-      if (list.size == 1) return list.first()
       while (true) {
          val target = list.find { it.netId == manager.activeNetwork?.netId() }
          if (target != null) {
