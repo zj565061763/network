@@ -6,7 +6,7 @@ androidGradlePlugin = "8.7.1"
 kotlin = "1.9.25"
 
 compose = "1.7.5"
-composeCompiler = "1.5.12"
+composeCompiler = "1.5.15"
 composeMaterial3 = "1.3.1"
 
 lifecycle = "2.8.7"
