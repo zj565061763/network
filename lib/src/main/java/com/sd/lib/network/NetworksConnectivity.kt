@@ -26,7 +26,7 @@ internal class NetworksConnectivity(
 
    /** 当前网络 */
    val currentNetwork: NetworkState
-      get() = manager.currentNetworkState()
+      get() = manager.currentNetworkState() ?: NetworkStateNone
 
    /** 监听当前网络 */
    val currentNetworkFlow: Flow<NetworkState>
@@ -81,15 +81,16 @@ internal class NetworksConnectivity(
             false
          }
 
-         val list = manager.currentNetworkState().let { currentNetworkState ->
-            if (currentNetworkState.netId.isEmpty()) {
+         val list = manager.currentNetworkState().let { networkState ->
+            if (networkState == null) {
                emptyList()
             } else {
-               listOf(currentNetworkState)
+               listOf(networkState)
             }
          }
 
          if (register) {
+            // registerNetworkCallback的时候可能已经回调了网络状态，所以这里要用compareAndSet
             _allNetworksFlow.compareAndSet(null, list)
             break
          } else {
@@ -118,9 +119,9 @@ internal class NetworksConnectivity(
    }
 }
 
-private fun ConnectivityManager.currentNetworkState(): NetworkState {
-   val network = this.activeNetwork ?: return NetworkStateNone
-   val capabilities = this.getNetworkCapabilities(network) ?: return NetworkStateNone
+private fun ConnectivityManager.currentNetworkState(): NetworkState? {
+   val network = this.activeNetwork ?: return null
+   val capabilities = this.getNetworkCapabilities(network) ?: return null
    return newNetworkState(network, capabilities)
 }
 
