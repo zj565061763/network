@@ -14,11 +14,10 @@ fun NetworkState.log() {
 
    logMsg {
       """
-                    $wifiOrCellular
-                    netId:${netId}
-                    isConnected:${isConnected()}
-                    isAvailable:${isAvailable()}
-                     
-                """.trimIndent()
+         $wifiOrCellular
+         netId:${netId}
+         isConnected:${isConnected()}
+         isAvailable:${isAvailable()}
+      """.trimIndent()
    }
 }
