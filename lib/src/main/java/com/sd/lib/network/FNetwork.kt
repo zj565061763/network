@@ -26,7 +26,7 @@ object FNetwork {
    private val _networksConnectivity by lazy {
       val context = _context ?: error("You should call FNetwork.init() before this.")
       val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-      NetworksConnectivity(manager).also { it.init() }
+      NetworksConnectivity(manager)
    }
 
    /**

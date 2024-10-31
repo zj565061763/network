@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 
 internal class NetworksConnectivity(
    private val manager: ConnectivityManager,
+   private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
 ) {
-   private val _scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
    private val _networks = mutableMapOf<Network, NetworkState>()
    private val _networksFlow = MutableStateFlow<List<NetworkState>?>(null)
 
@@ -45,14 +45,6 @@ internal class NetworksConnectivity(
       }
    }
 
-   /**
-    * 初始化
-    */
-   fun init() {
-      _scope.launch {
-         registerNetworkCallback()
-      }
-   }
 
    /**
     * 注册网络监听
@@ -105,6 +97,12 @@ internal class NetworksConnectivity(
             delay(1_000)
             continue
          }
+      }
+   }
+
+   init {
+      scope.launch {
+         registerNetworkCallback()
       }
    }
 }
