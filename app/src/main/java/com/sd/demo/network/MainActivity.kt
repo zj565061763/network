@@ -26,6 +26,7 @@ class MainActivity : ComponentActivity() {
          AppTheme {
             Content(
                listActivity = listOf(
+                  SampleNetworkObserver::class.java,
                   SampleCurrentNetwork::class.java,
                   SampleAllNetworks::class.java,
                   SampleNetworkAwait::class.java,
