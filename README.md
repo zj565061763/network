@@ -31,9 +31,9 @@ FNetwork.currentNetwork.isCellular()
 
 ```kotlin
 private val networkObserver = object : FNetworkObserver() {
-    override fun onChange(networkState: NetworkState) {
-        // 网络状态变化
-    }
+   override fun onChange(networkState: NetworkState) {
+      // 网络状态变化
+   }
 }
 
 // 注册监听
@@ -47,9 +47,9 @@ networkObserver.unregister()
 
 ```kotlin
 lifecycleScope.launch {
-    FNetwork.currentNetworkFlow.collect { networkState ->
-        // 网络状态变化
-    }
+   FNetwork.currentNetworkFlow.collect { networkState ->
+      // 网络状态变化
+   }
 }
 ```
 
@@ -57,9 +57,9 @@ lifecycleScope.launch {
 
 ```kotlin
 lifecycleScope.launch {
-    FNetwork.allNetworksFlow.collect { list ->
-        // 所有网络状态变化
-    }
+   FNetwork.allNetworksFlow.collect { list ->
+      // 所有网络状态变化
+   }
 }
 ```
 
@@ -67,18 +67,18 @@ lifecycleScope.launch {
 
 ```kotlin
 lifecycleScope.launch {
-    // 默认情况下，如果网络未连接，会挂起直到网络已连接
-    fNetworkAwait()
+   // 默认情况下，如果网络未连接，会挂起直到网络已连接
+   fNetwork()
 }
 ```
 
-`fNetworkAwait`函数：
+`fNetwork`函数：
 
 ```kotlin
 /**
  * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
  */
-suspend fun fNetworkAwait(
-    condition: (NetworkState) -> Boolean = { it.isConnected() }
+suspend fun fNetwork(
+   condition: (NetworkState) -> Boolean = { it.isConnected() },
 )
 ```
