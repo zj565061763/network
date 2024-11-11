@@ -34,7 +34,7 @@ android {
 
 dependencies {
    implementation(libs.androidx.startup)
-   api(libs.kotlinx.coroutines)
+   implementation(libs.kotlinx.coroutines)
 }
 
 publishing {
