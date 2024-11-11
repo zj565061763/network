@@ -47,8 +47,6 @@ suspend fun fNetwork(
    condition: (NetworkState) -> Boolean = { it.isConnected() },
 ): Boolean {
    if (condition(FNetwork.currentNetwork)) return true
-   FNetwork.currentNetworkFlow.first { networkState ->
-      condition(networkState)
-   }
+   FNetwork.currentNetworkFlow.first { condition(it) }
    return false
 }
