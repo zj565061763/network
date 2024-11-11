@@ -2,47 +2,53 @@ package com.sd.lib.network
 
 import android.net.NetworkCapabilities
 
-/**
- * 网络状态
- */
-data class NetworkState(
+interface NetworkState {
    /** 网络Id */
-   val netId: String,
+   val id: String
 
-   /** [NetworkCapabilities.TRANSPORT_WIFI] */
-   val transportWifi: Boolean,
+   /** 是否Wifi网络 */
+   val isWifi: Boolean
 
-   /** [NetworkCapabilities.TRANSPORT_CELLULAR] */
-   val transportCellular: Boolean,
+   /** 是否手机网络 */
+   val isCellular: Boolean
 
-   /** [NetworkCapabilities.NET_CAPABILITY_INTERNET] */
-   val netCapabilityInternet: Boolean,
+   /** 网络是否已连接，已连接不代表网络一定可用 */
+   val isConnected: Boolean
 
-   /** [NetworkCapabilities.NET_CAPABILITY_VALIDATED] */
-   val netCapabilityValidated: Boolean,
-) {
-   /**
-    * 是否Wifi网络
-    */
-   fun isWifi(): Boolean = this.transportWifi
-
-   /**
-    * 是否手机网络
-    */
-   fun isCellular(): Boolean = this.transportCellular
-
-   /**
-    * 网络是否已连接，已连接不代表网络一定可用
-    */
-   fun isConnected(): Boolean = this.netCapabilityInternet
-
-   /**
-    * 网络是否可用
-    */
-   fun isAvailable(): Boolean = this.netCapabilityValidated
+   /** 网络是否已验证可用 */
+   val isValidated: Boolean
 }
 
-internal val NetworkStateNone = NetworkState(
+internal data class NetworkStateModel(
+   /** 网络Id */
+   val netId: String,
+   /** [NetworkCapabilities.TRANSPORT_WIFI] */
+   val transportWifi: Boolean,
+   /** [NetworkCapabilities.TRANSPORT_CELLULAR] */
+   val transportCellular: Boolean,
+   /** [NetworkCapabilities.NET_CAPABILITY_INTERNET] */
+   val netCapabilityInternet: Boolean,
+   /** [NetworkCapabilities.NET_CAPABILITY_VALIDATED] */
+   val netCapabilityValidated: Boolean,
+) : NetworkState {
+
+   override val id: String
+      get() = netId
+
+   override val isWifi: Boolean
+      get() = transportWifi
+
+   override val isCellular: Boolean
+      get() = transportCellular
+
+   override val isConnected: Boolean
+      get() = netCapabilityInternet
+
+   override val isValidated: Boolean
+      get() = netCapabilityValidated
+}
+
+internal val NetworkStateNone: NetworkState = NetworkStateModel(
    netId = "",
    transportWifi = false,
    transportCellular = false,

@@ -7,17 +7,17 @@ import com.sd.lib.network.NetworkState
  */
 fun NetworkState.log() {
    val wifiOrCellular = when {
-      isWifi() -> "Wifi"
-      isCellular() -> "Cellular"
+      isWifi -> "Wifi"
+      isCellular -> "Cellular"
       else -> "None"
    }
 
    logMsg {
       """
          $wifiOrCellular
-         netId:${netId}
-         isConnected:${isConnected()}
-         isAvailable:${isAvailable()}
+         id:${id}
+         isConnected:${isConnected}
+         isValidated:${isValidated}
          ${toString()}
       """.trimIndent()
    }

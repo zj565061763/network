@@ -99,7 +99,7 @@ internal class NetworksConnectivity(
    private suspend fun filterCurrentNetwork(list: List<NetworkState>): NetworkState {
       if (list.isEmpty()) return NetworkStateNone
       while (true) {
-         val target = list.find { it.netId == manager.activeNetwork?.netId() }
+         val target = list.find { it.id == manager.activeNetwork?.netId() }
          if (target != null) {
             return target
          } else {
@@ -126,7 +126,7 @@ private fun newNetworkState(
    network: Network,
    networkCapabilities: NetworkCapabilities,
 ): NetworkState {
-   return NetworkState(
+   return NetworkStateModel(
       netId = network.netId(),
       transportWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
       transportCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),

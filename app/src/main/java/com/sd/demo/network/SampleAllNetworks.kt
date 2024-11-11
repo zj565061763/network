@@ -57,7 +57,7 @@ private fun ContentView(
    ) {
       items(
          items = list,
-         key = { it.netId },
+         key = { it.id },
       ) { item ->
          ItemView(networkState = item)
       }
