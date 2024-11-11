@@ -41,12 +41,14 @@ object FNetwork {
 
 /**
  * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
+ * @return true-调用此方法时立即满足[condition]；false-调用此方法时不满足条件[condition]，挂起之后满足
  */
 suspend fun fNetwork(
    condition: (NetworkState) -> Boolean = { it.isConnected() },
-) {
-   if (condition(FNetwork.currentNetwork)) return
+): Boolean {
+   if (condition(FNetwork.currentNetwork)) return true
    FNetwork.currentNetworkFlow.first { networkState ->
       condition(networkState)
    }
+   return false
 }
