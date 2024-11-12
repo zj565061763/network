@@ -43,7 +43,7 @@ object FNetwork {
  * 如果当前网络不满足[condition]，则挂起直到满足[condition]，默认[condition]为网络已连接
  * @return true-调用时已经满足[condition]；false-调用时还不满足[condition]，挂起等待之后满足[condition]
  */
-suspend fun fNetwork(
+suspend fun fAwaitNetwork(
    condition: (NetworkState) -> Boolean = { it.isConnected },
 ): Boolean {
    if (condition(FNetwork.currentNetwork)) return true
