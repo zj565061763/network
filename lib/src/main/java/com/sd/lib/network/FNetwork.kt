@@ -40,8 +40,8 @@ object FNetwork {
 }
 
 /**
- * 如果满足[condition]，直接返回，否则挂起直到满足[condition]
- * @return true-调用此方法时立即满足[condition]；false-调用此方法时不满足条件[condition]，挂起之后满足
+ * 如果当前网络不满足[condition]，则挂起直到满足[condition]，默认[condition]为网络已连接
+ * @return true-调用时已经满足[condition]；false-调用时还不满足[condition]，挂起等待之后满足[condition]
  */
 suspend fun fNetwork(
    condition: (NetworkState) -> Boolean = { it.isConnected },
