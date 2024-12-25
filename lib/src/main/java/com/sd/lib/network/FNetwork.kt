@@ -33,7 +33,7 @@ object FNetwork {
    * 初始化
    */
   fun init(context: Context) {
-    context.applicationContext?.let { appContext ->
+    context.applicationContext?.also { appContext ->
       _context = appContext
     }
   }
