@@ -4,10 +4,9 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,6 @@ import kotlinx.coroutines.launch
 
 internal class NetworksConnectivity(
   private val manager: ConnectivityManager,
-  scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
 ) {
   private val _networks = mutableMapOf<Network, NetworkState>()
   private val _networksFlow = MutableStateFlow<List<NetworkState>?>(null)
@@ -110,7 +108,8 @@ internal class NetworksConnectivity(
   }
 
   init {
-    scope.launch {
+    @Suppress("OPT_IN_USAGE")
+    GlobalScope.launch {
       registerNetworkCallback()
     }
   }
