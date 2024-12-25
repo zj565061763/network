@@ -80,7 +80,7 @@ internal class NetworksConnectivity(
       }
 
       if (register) {
-        // registerNetworkCallback的时候可能已经回调了网络状态，所以这里要用compareAndSet
+        // registerNetworkCallback时可能已经回调了网络状态，所以这里要用compareAndSet
         _networksFlow.compareAndSet(null, list)
         break
       } else {
