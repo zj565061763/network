@@ -12,11 +12,8 @@ interface NetworkState {
   /** 是否手机网络 */
   val isCellular: Boolean
 
-  /** 网络是否已连接，已连接不代表网络一定可用 */
+  /** 网络是否已连接 */
   val isConnected: Boolean
-
-  /** 网络是否已验证可用 */
-  val isValidated: Boolean
 }
 
 internal data class NetworkStateModel(
@@ -28,8 +25,6 @@ internal data class NetworkStateModel(
   val transportCellular: Boolean,
   /** [NetworkCapabilities.NET_CAPABILITY_INTERNET] */
   val netCapabilityInternet: Boolean,
-  /** [NetworkCapabilities.NET_CAPABILITY_VALIDATED] */
-  val netCapabilityValidated: Boolean,
 ) : NetworkState {
 
   override val id: String
@@ -43,9 +38,6 @@ internal data class NetworkStateModel(
 
   override val isConnected: Boolean
     get() = netCapabilityInternet
-
-  override val isValidated: Boolean
-    get() = netCapabilityValidated
 }
 
 internal val NetworkStateNone: NetworkState = NetworkStateModel(
@@ -53,5 +45,4 @@ internal val NetworkStateNone: NetworkState = NetworkStateModel(
   transportWifi = false,
   transportCellular = false,
   netCapabilityInternet = false,
-  netCapabilityValidated = false,
 )

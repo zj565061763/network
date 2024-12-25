@@ -130,7 +130,6 @@ private fun newNetworkState(
     transportWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
     transportCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
     netCapabilityInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
-    netCapabilityValidated = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
   )
 }
 

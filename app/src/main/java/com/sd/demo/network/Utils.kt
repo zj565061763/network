@@ -17,7 +17,6 @@ fun NetworkState.log() {
          $wifiOrCellular
          id:${id}
          isConnected:${isConnected}
-         isValidated:${isValidated}
          ${toString()}
       """.trimIndent()
   }
