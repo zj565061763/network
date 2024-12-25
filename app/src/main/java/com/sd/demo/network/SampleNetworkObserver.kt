@@ -18,49 +18,49 @@ import com.sd.lib.network.FNetworkObserver
 import com.sd.lib.network.NetworkState
 
 class SampleNetworkObserver : ComponentActivity() {
-   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      setContent {
-         AppTheme {
-            ContentView { checked ->
-               if (checked) {
-                  _observer.register()
-               } else {
-                  _observer.unregister()
-               }
-            }
-         }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      AppTheme {
+        ContentView { checked ->
+          if (checked) {
+            _observer.register()
+          } else {
+            _observer.unregister()
+          }
+        }
       }
-   }
+    }
+  }
 
-   private val _observer = object : FNetworkObserver() {
-      override fun onChange(networkState: NetworkState) {
-         networkState.log()
-      }
-   }
+  private val _observer = object : FNetworkObserver() {
+    override fun onChange(networkState: NetworkState) {
+      networkState.log()
+    }
+  }
 
-   override fun onDestroy() {
-      super.onDestroy()
-      _observer.unregister()
-   }
+  override fun onDestroy() {
+    super.onDestroy()
+    _observer.unregister()
+  }
 }
 
 @Composable
 private fun ContentView(
-   modifier: Modifier = Modifier,
-   onCheckedChange: (Boolean) -> Unit,
+  modifier: Modifier = Modifier,
+  onCheckedChange: (Boolean) -> Unit,
 ) {
-   var checked by remember { mutableStateOf(false) }
-   Column(
-      modifier = modifier.fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-   ) {
-      Switch(
-         checked = checked,
-         onCheckedChange = {
-            checked = it
-            onCheckedChange(it)
-         },
-      )
-   }
+  var checked by remember { mutableStateOf(false) }
+  Column(
+    modifier = modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Switch(
+      checked = checked,
+      onCheckedChange = {
+        checked = it
+        onCheckedChange(it)
+      },
+    )
+  }
 }

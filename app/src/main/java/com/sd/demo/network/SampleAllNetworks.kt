@@ -25,54 +25,54 @@ import kotlinx.coroutines.launch
 
 class SampleAllNetworks : ComponentActivity() {
 
-   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      lifecycleScope.launch {
-         // 监听所有网络
-         FNetwork.allNetworksFlow.collect { list ->
-            logMsg {
-               "size:${list.size}\n${list.joinToString(separator = "\n")}"
-            }
-         }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    lifecycleScope.launch {
+      // 监听所有网络
+      FNetwork.allNetworksFlow.collect { list ->
+        logMsg {
+          "size:${list.size}\n${list.joinToString(separator = "\n")}"
+        }
       }
+    }
 
-      setContent {
-         AppTheme {
-            ContentView()
-         }
+    setContent {
+      AppTheme {
+        ContentView()
       }
-   }
+    }
+  }
 }
 
 @Composable
 private fun ContentView(
-   modifier: Modifier = Modifier,
+  modifier: Modifier = Modifier,
 ) {
-   val list by FNetwork.allNetworksFlow.collectAsStateWithLifecycle(emptyList())
+  val list by FNetwork.allNetworksFlow.collectAsStateWithLifecycle(emptyList())
 
-   LazyColumn(
-      modifier = modifier.fillMaxSize(),
-      verticalArrangement = Arrangement.spacedBy(10.dp),
-      contentPadding = PaddingValues(10.dp),
-   ) {
-      items(
-         items = list,
-         key = { it.id },
-      ) { item ->
-         ItemView(networkState = item)
-      }
-   }
+  LazyColumn(
+    modifier = modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.spacedBy(10.dp),
+    contentPadding = PaddingValues(10.dp),
+  ) {
+    items(
+      items = list,
+      key = { it.id },
+    ) { item ->
+      ItemView(networkState = item)
+    }
+  }
 }
 
 @Composable
 private fun ItemView(
-   modifier: Modifier = Modifier,
-   networkState: NetworkState,
+  modifier: Modifier = Modifier,
+  networkState: NetworkState,
 ) {
-   Card(modifier = modifier.fillMaxWidth()) {
-      Text(
-         text = networkState.toString(),
-         modifier = Modifier.padding(10.dp),
-      )
-   }
+  Card(modifier = modifier.fillMaxWidth()) {
+    Text(
+      text = networkState.toString(),
+      modifier = Modifier.padding(10.dp),
+    )
+  }
 }

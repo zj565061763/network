@@ -20,43 +20,43 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SampleCurrentNetworkFlow : ComponentActivity() {
-   private var _flowJob: Job? = null
+  private var _flowJob: Job? = null
 
-   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      setContent {
-         AppTheme {
-            ContentView { checked ->
-               _flowJob?.cancel()
-               if (checked) {
-                  _flowJob = lifecycleScope.launch {
-                     FNetwork.currentNetworkFlow.collect { networkState ->
-                        networkState.log()
-                     }
-                  }
-               }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      AppTheme {
+        ContentView { checked ->
+          _flowJob?.cancel()
+          if (checked) {
+            _flowJob = lifecycleScope.launch {
+              FNetwork.currentNetworkFlow.collect { networkState ->
+                networkState.log()
+              }
             }
-         }
+          }
+        }
       }
-   }
+    }
+  }
 }
 
 @Composable
 private fun ContentView(
-   modifier: Modifier = Modifier,
-   onCheckedChange: (Boolean) -> Unit,
+  modifier: Modifier = Modifier,
+  onCheckedChange: (Boolean) -> Unit,
 ) {
-   var checked by remember { mutableStateOf(false) }
-   Column(
-      modifier = modifier.fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-   ) {
-      Switch(
-         checked = checked,
-         onCheckedChange = {
-            checked = it
-            onCheckedChange(it)
-         },
-      )
-   }
+  var checked by remember { mutableStateOf(false) }
+  Column(
+    modifier = modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Switch(
+      checked = checked,
+      onCheckedChange = {
+        checked = it
+        onCheckedChange(it)
+      },
+    )
+  }
 }

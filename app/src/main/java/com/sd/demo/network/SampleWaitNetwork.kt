@@ -17,43 +17,43 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class SampleWaitNetwork : ComponentActivity() {
-   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      setContent {
-         AppTheme {
-            ContentView {
-               lifecycleScope.launch {
-                  launchNetWorkAwait()
-               }
-            }
-         }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      AppTheme {
+        ContentView {
+          lifecycleScope.launch {
+            launchNetWorkAwait()
+          }
+        }
       }
-   }
+    }
+  }
 
-   private suspend fun launchNetWorkAwait() {
-      val uuid = UUID.randomUUID().toString()
-      runCatching {
-         logMsg { "$uuid start" }
-         fAwaitNetwork()
-      }.onSuccess {
-         logMsg { "$uuid onSuccess" }
-      }.onFailure {
-         logMsg { "$uuid onFailure $it" }
-      }
-   }
+  private suspend fun launchNetWorkAwait() {
+    val uuid = UUID.randomUUID().toString()
+    runCatching {
+      logMsg { "$uuid start" }
+      fAwaitNetwork()
+    }.onSuccess {
+      logMsg { "$uuid onSuccess" }
+    }.onFailure {
+      logMsg { "$uuid onFailure $it" }
+    }
+  }
 }
 
 @Composable
 private fun ContentView(
-   modifier: Modifier = Modifier,
-   onClickLaunch: () -> Unit,
+  modifier: Modifier = Modifier,
+  onClickLaunch: () -> Unit,
 ) {
-   Column(
-      modifier = modifier.fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-   ) {
-      Button(onClick = onClickLaunch) {
-         Text(text = "launch")
-      }
-   }
+  Column(
+    modifier = modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Button(onClick = onClickLaunch) {
+      Text(text = "launch")
+    }
+  }
 }

@@ -8,35 +8,35 @@ import kotlinx.coroutines.flow.first
 
 @SuppressLint("StaticFieldLeak")
 object FNetwork {
-   /** 当前网络 */
-   val currentNetwork: NetworkState
-      get() = _networksConnectivity.currentNetwork
+  /** 当前网络 */
+  val currentNetwork: NetworkState
+    get() = _networksConnectivity.currentNetwork
 
-   /** 监听当前网络 */
-   val currentNetworkFlow: Flow<NetworkState>
-      get() = _networksConnectivity.currentNetworkFlow
+  /** 监听当前网络 */
+  val currentNetworkFlow: Flow<NetworkState>
+    get() = _networksConnectivity.currentNetworkFlow
 
-   /** 监听所有网络 */
-   val allNetworksFlow: Flow<List<NetworkState>>
-      get() = _networksConnectivity.allNetworksFlow
+  /** 监听所有网络 */
+  val allNetworksFlow: Flow<List<NetworkState>>
+    get() = _networksConnectivity.allNetworksFlow
 
-   @Volatile
-   private var _context: Context? = null
+  @Volatile
+  private var _context: Context? = null
 
-   private val _networksConnectivity by lazy {
-      val context = _context ?: error("You should call FNetwork.init() before this.")
-      val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-      NetworksConnectivity(manager)
-   }
+  private val _networksConnectivity by lazy {
+    val context = _context ?: error("You should call FNetwork.init() before this.")
+    val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    NetworksConnectivity(manager)
+  }
 
-   /**
-    * 初始化
-    */
-   fun init(context: Context) {
-      context.applicationContext?.let { appContext ->
-         _context = appContext
-      }
-   }
+  /**
+   * 初始化
+   */
+  fun init(context: Context) {
+    context.applicationContext?.let { appContext ->
+      _context = appContext
+    }
+  }
 }
 
 /**
@@ -44,9 +44,9 @@ object FNetwork {
  * @return true-调用时已经满足[condition]；false-调用时还不满足[condition]，挂起等待之后满足[condition]
  */
 suspend fun fAwaitNetwork(
-   condition: (NetworkState) -> Boolean = { it.isConnected },
+  condition: (NetworkState) -> Boolean = { it.isConnected },
 ): Boolean {
-   if (condition(FNetwork.currentNetwork)) return true
-   FNetwork.currentNetworkFlow.first { condition(it) }
-   return false
+  if (condition(FNetwork.currentNetwork)) return true
+  FNetwork.currentNetworkFlow.first { condition(it) }
+  return false
 }
