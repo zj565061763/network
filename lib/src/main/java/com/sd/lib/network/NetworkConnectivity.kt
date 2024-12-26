@@ -136,11 +136,9 @@ private fun newNetworkState(
   networkCapabilities: NetworkCapabilities,
 ): NetworkState {
   return NetworkStateModel(
-    netId = network.netId(),
+    netId = network.toString(),
     transportWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
     transportCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
     netCapabilityInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
   )
 }
-
-private fun Network.netId(): String = this.toString()

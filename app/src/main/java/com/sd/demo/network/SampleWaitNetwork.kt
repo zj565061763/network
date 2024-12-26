@@ -21,16 +21,18 @@ class SampleWaitNetwork : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       AppTheme {
-        ContentView {
-          lifecycleScope.launch {
-            launchNetWorkAwait()
+        ContentView(
+          onClickLaunch = {
+            lifecycleScope.launch {
+              launchNetwork()
+            }
           }
-        }
+        )
       }
     }
   }
 
-  private suspend fun launchNetWorkAwait() {
+  private suspend fun launchNetwork() {
     val uuid = UUID.randomUUID().toString()
     runCatching {
       logMsg { "$uuid start" }
