@@ -32,12 +32,13 @@ internal class NetworkConnectivity(
     manager.registerDefaultNetworkCallback(this)
   }
 
-  override fun onInitialNetworkState(networkState: NetworkState?) {
-    _networkFlow.compareAndSet(null, networkState ?: NetworkStateNone)
-  }
-
-  override fun onLoopNetworkState(networkState: NetworkState?) {
-    _networkFlow.value = networkState ?: NetworkStateNone
+  override fun onRegisterCallbackResult(register: Boolean, networkState: NetworkState?) {
+    val state = networkState ?: NetworkStateNone
+    if (register) {
+      _networkFlow.compareAndSet(null, state)
+    } else {
+      _networkFlow.value = state
+    }
   }
 
   override fun onLost(network: Network) {
@@ -66,14 +67,13 @@ internal class NetworksConnectivity(
     manager.registerNetworkCallback(request, this)
   }
 
-  override fun onInitialNetworkState(networkState: NetworkState?) {
+  override fun onRegisterCallbackResult(register: Boolean, networkState: NetworkState?) {
     val list = if (networkState != null) listOf(networkState) else emptyList()
-    _networksFlow.compareAndSet(null, list)
-  }
-
-  override fun onLoopNetworkState(networkState: NetworkState?) {
-    val list = if (networkState != null) listOf(networkState) else emptyList()
-    _networksFlow.value = list
+    if (register) {
+      _networksFlow.compareAndSet(null, list)
+    } else {
+      _networksFlow.value = list
+    }
   }
 
   override fun onLost(network: Network) {
@@ -104,10 +104,10 @@ internal abstract class BaseNetworkConnectivity(
       val networkState = manager.currentNetworkState()
 
       if (register) {
-        onInitialNetworkState(networkState)
+        onRegisterCallbackResult(true, networkState)
         break
       } else {
-        onLoopNetworkState(networkState)
+        onRegisterCallbackResult(false, networkState)
         delay(1_000)
         continue
       }
@@ -115,8 +115,7 @@ internal abstract class BaseNetworkConnectivity(
   }
 
   protected abstract fun onRegisterCallback()
-  protected abstract fun onInitialNetworkState(networkState: NetworkState?)
-  protected abstract fun onLoopNetworkState(networkState: NetworkState?)
+  protected abstract fun onRegisterCallbackResult(register: Boolean, networkState: NetworkState?)
 
   init {
     @Suppress("OPT_IN_USAGE")
