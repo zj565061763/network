@@ -16,10 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.sd.demo.network.theme.AppTheme
 import com.sd.lib.network.FNetwork
+import com.sd.lib.network.NetworkState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class SampleCurrentNetworkFlow : ComponentActivity() {
+class SampleCurrentNetwork : ComponentActivity() {
   private var _flowJob: Job? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,14 +28,19 @@ class SampleCurrentNetworkFlow : ComponentActivity() {
     setContent {
       AppTheme {
         ContentView { checked ->
-          _flowJob?.cancel()
-          if (checked) {
-            _flowJob = lifecycleScope.launch {
-              FNetwork.currentNetworkFlow.collect { networkState ->
-                networkState.log()
-              }
-            }
-          }
+          handleCheckedChange(checked)
+        }
+      }
+    }
+  }
+
+  private fun handleCheckedChange(checked: Boolean) {
+    _flowJob?.cancel()
+    if (checked) {
+      _flowJob = lifecycleScope.launch {
+        // 监听当前网络
+        FNetwork.currentNetworkFlow.collect { networkState ->
+          networkState.log()
         }
       }
     }
@@ -59,4 +65,13 @@ private fun ContentView(
       },
     )
   }
+}
+
+private fun NetworkState.log() {
+  val wifiOrCellular = when {
+    isWifi -> "Wifi"
+    isCellular -> "Cellular"
+    else -> "None"
+  }
+  logMsg { "$wifiOrCellular $this" }
 }

@@ -26,10 +26,9 @@ class MainActivity : ComponentActivity() {
       AppTheme {
         Content(
           listActivity = listOf(
-            SampleNetworkObserver::class.java,
-            SampleCurrentNetworkFlow::class.java,
-            SampleWaitNetwork::class.java,
+            SampleCurrentNetwork::class.java,
             SampleAllNetworks::class.java,
+            SampleWaitNetwork::class.java,
           ),
           onClickActivity = {
             startActivity(Intent(this, it))
