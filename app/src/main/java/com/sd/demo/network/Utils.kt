@@ -11,13 +11,5 @@ fun NetworkState.log() {
     isCellular -> "Cellular"
     else -> "None"
   }
-
-  logMsg {
-    """
-         $wifiOrCellular
-         id:${id}
-         isConnected:${isConnected}
-         ${toString()}
-      """.trimIndent()
-  }
+  logMsg { "$wifiOrCellular $this" }
 }
