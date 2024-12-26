@@ -34,7 +34,7 @@ android {
 
 dependencies {
   implementation(libs.androidx.startup)
-  implementation(libs.kotlinx.coroutines)
+  compileOnly(libs.kotlinx.coroutines)
 }
 
 publishing {
