@@ -24,7 +24,7 @@ internal class NetworkConnectivity(
   val networkFlow: Flow<NetworkState>
     get() = _networkFlow.filterNotNull()
       .mapLatest { state ->
-        if (state == NetworkStateNone) delay(500)
+        if (state == NetworkStateNone) delay(600)
         state
       }.distinctUntilChanged()
 
