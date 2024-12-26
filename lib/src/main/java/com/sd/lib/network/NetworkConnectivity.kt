@@ -101,11 +101,13 @@ internal abstract class BaseNetworkConnectivity(
         false
       }
 
+      val networkState = manager.currentNetworkState()
+
       if (register) {
-        onInitialNetworkState(manager.currentNetworkState())
+        onInitialNetworkState(networkState)
         break
       } else {
-        onLoopNetworkState(manager.currentNetworkState())
+        onLoopNetworkState(networkState)
         delay(1_000)
         continue
       }
