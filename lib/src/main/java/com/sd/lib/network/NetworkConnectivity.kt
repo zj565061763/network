@@ -12,15 +12,13 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 /** 当前网络 */
-internal class CurrentNetworkConnectivity(
+internal class NetworkConnectivity(
   manager: ConnectivityManager,
 ) : BaseNetworkConnectivity(manager) {
   private val _networkFlow = MutableStateFlow<NetworkState?>(null)
 
-  val networkFlow: Flow<NetworkState> = _networkFlow.filterNotNull()
-
-  val network: NetworkState
-    get() = manager.currentNetworkState() ?: NetworkStateNone
+  val networkFlow: Flow<NetworkState>
+    get() = _networkFlow.filterNotNull()
 
   override fun onRegisterCallback() {
     manager.registerDefaultNetworkCallback(this)
@@ -43,13 +41,15 @@ internal class CurrentNetworkConnectivity(
   }
 }
 
-internal class AllNetworkConnectivity(
+/** 所有网络 */
+internal class NetworksConnectivity(
   manager: ConnectivityManager,
 ) : BaseNetworkConnectivity(manager) {
   private val _networks = mutableMapOf<Network, NetworkState>()
   private val _networksFlow = MutableStateFlow<List<NetworkState>?>(null)
 
-  val networksFlow: Flow<List<NetworkState>> = _networksFlow.filterNotNull()
+  val networksFlow: Flow<List<NetworkState>>
+    get() = _networksFlow.filterNotNull()
 
   override fun onRegisterCallback() {
     val request = NetworkRequest.Builder()
@@ -116,7 +116,7 @@ internal abstract class BaseNetworkConnectivity(
   }
 }
 
-private fun ConnectivityManager.currentNetworkState(): NetworkState? {
+internal fun ConnectivityManager.currentNetworkState(): NetworkState? {
   val network = this.activeNetwork ?: return null
   val capabilities = this.getNetworkCapabilities(network) ?: return null
   return newNetworkState(network, capabilities)

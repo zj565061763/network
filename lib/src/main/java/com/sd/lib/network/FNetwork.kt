@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 object FNetwork {
   /** 当前网络 */
   val currentNetwork: NetworkState
-    get() = _currentNetwork.network
+    get() = _connectivityManager.currentNetworkState() ?: NetworkStateNone
 
   /** 监听当前网络 */
   val currentNetworkFlow: Flow<NetworkState>
@@ -18,18 +18,17 @@ object FNetwork {
 
   /** 监听所有网络 */
   val allNetworksFlow: Flow<List<NetworkState>>
-    get() = _allNetwork.networksFlow
+    get() = _allNetworks.networksFlow
 
   @Volatile
   private var _context: Context? = null
-
-  private val _currentNetwork by lazy { CurrentNetworkConnectivity(_connectivityManager) }
-  private val _allNetwork by lazy { AllNetworkConnectivity(_connectivityManager) }
-
   private val _connectivityManager by lazy {
     val context = _context ?: error("You should call FNetwork.init() before this.")
     context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
   }
+
+  private val _currentNetwork by lazy { NetworkConnectivity(_connectivityManager) }
+  private val _allNetworks by lazy { NetworksConnectivity(_connectivityManager) }
 
   /**
    * 初始化
