@@ -20,58 +20,37 @@ val currentNetwork: NetworkState = FNetwork.currentNetwork
 
 ```kotlin
 interface NetworkState {
-   /** 网络Id */
-   val id: String
+  /** 网络Id */
+  val id: String
 
-   /** 是否Wifi网络 */
-   val isWifi: Boolean
+  /** 是否Wifi网络 */
+  val isWifi: Boolean
 
-   /** 是否手机网络 */
-   val isCellular: Boolean
+  /** 是否手机网络 */
+  val isCellular: Boolean
 
-   /** 网络是否已连接，已连接不代表网络一定可用 */
-   val isConnected: Boolean
-
-   /** 网络是否已验证可用 */
-   val isValidated: Boolean
+  /** 网络是否已连接 */
+  val isConnected: Boolean
 }
 ```
 
 # 监听当前网络状态
 
-### Flow监听
-
 ```kotlin
 lifecycleScope.launch {
-   FNetwork.currentNetworkFlow.collect { networkState: NetworkState ->
-      // 网络状态变化
-   }
+  FNetwork.currentNetworkFlow.collect { networkState: NetworkState ->
+    // 网络状态变化
+  }
 }
-```
-
-### 常规监听
-
-```kotlin
-private val networkObserver = object : FNetworkObserver() {
-   override fun onChange(networkState: NetworkState) {
-      // 网络状态变化
-   }
-}
-
-// 注册监听
-networkObserver.register()
-
-// 取消注册监听
-networkObserver.unregister()
 ```
 
 # 监听所有网络
 
 ```kotlin
 lifecycleScope.launch {
-   FNetwork.allNetworksFlow.collect { list ->
-      // 所有网络状态变化
-   }
+  FNetwork.allNetworksFlow.collect { list: List<NetworkState> ->
+    // 所有网络状态变化
+  }
 }
 ```
 
@@ -85,6 +64,6 @@ lifecycleScope.launch {
  * @return true-调用时已经满足[condition]；false-调用时还不满足[condition]，挂起等待之后满足[condition]
  */
 suspend fun fAwaitNetwork(
-   condition: (NetworkState) -> Boolean = { it.isConnected },
+  condition: (NetworkState) -> Boolean = { it.isConnected },
 ): Boolean
 ```
