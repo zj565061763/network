@@ -8,10 +8,6 @@ import kotlinx.coroutines.flow.first
 
 @SuppressLint("StaticFieldLeak")
 object FNetwork {
-  /** 当前网络 */
-  val currentNetwork: NetworkState
-    get() = _connectivityManager.currentNetworkState() ?: NetworkStateNone
-
   /** 监听当前网络 */
   val currentNetworkFlow: Flow<NetworkState>
     get() = _currentNetwork.networkFlow
@@ -32,12 +28,19 @@ object FNetwork {
   private val _allNetworks by lazy { NetworksConnectivity(_connectivityManager) }
 
   /**
-   * 初始化
+   * 默认在主进程自动初始化，如果要在其他进程使用，需要在其他进程手动初始化。
    */
+  @JvmStatic
   fun init(context: Context) {
     context.applicationContext?.also { appContext ->
       _context = appContext
     }
+  }
+
+  /** 获取当前网络 */
+  @JvmStatic
+  fun getCurrentNetwork(): NetworkState {
+    return _connectivityManager.currentNetworkState() ?: NetworkStateNone
   }
 }
 
@@ -48,7 +51,7 @@ object FNetwork {
 suspend fun fAwaitNetwork(
   condition: (NetworkState) -> Boolean = { it.isConnected },
 ): Boolean {
-  if (condition(FNetwork.currentNetwork)) return true
+  if (condition(FNetwork.getCurrentNetwork())) return true
   FNetwork.currentNetworkFlow.first { condition(it) }
   return false
 }

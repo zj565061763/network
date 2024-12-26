@@ -15,7 +15,7 @@ FNetwork.init(context)
 
 ```kotlin
 // 获取当前网络状态
-val currentNetwork: NetworkState = FNetwork.currentNetwork
+val currentNetwork: NetworkState = FNetwork.getCurrentNetwork()
 ```
 
 ```kotlin
