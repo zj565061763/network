@@ -4,11 +4,14 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 /** 当前网络 */
@@ -17,8 +20,13 @@ internal class NetworkConnectivity(
 ) : BaseNetworkConnectivity(manager) {
   private val _networkFlow = MutableStateFlow<NetworkState?>(null)
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   val networkFlow: Flow<NetworkState>
     get() = _networkFlow.filterNotNull()
+      .mapLatest { state ->
+        if (state == NetworkStateNone) delay(500)
+        state
+      }.distinctUntilChanged()
 
   override fun onRegisterCallback() {
     manager.registerDefaultNetworkCallback(this)
