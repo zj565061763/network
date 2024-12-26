@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 internal class NetworksConnectivity(
   private val manager: ConnectivityManager,
-) {
+) : ConnectivityManager.NetworkCallback() {
   private val _networks = mutableMapOf<Network, NetworkState>()
   private val _networksFlow = MutableStateFlow<List<NetworkState>?>(null)
 
@@ -36,22 +36,14 @@ internal class NetworksConnectivity(
     .distinctUntilChanged()
     .flowOn(Dispatchers.IO)
 
-  private val _networkCallback = object : ConnectivityManager.NetworkCallback() {
-    override fun onLost(network: Network) {
-      super.onLost(network)
-      _networks.remove(network)
-      syncNetworksFlow()
-    }
+  override fun onLost(network: Network) {
+    _networks.remove(network)
+    _networksFlow.value = _networks.values.toList()
+  }
 
-    override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-      super.onCapabilitiesChanged(network, networkCapabilities)
-      _networks[network] = newNetworkState(network, networkCapabilities)
-      syncNetworksFlow()
-    }
-
-    private fun syncNetworksFlow() {
-      _networksFlow.value = _networks.values.toList()
-    }
+  override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+    _networks[network] = newNetworkState(network, networkCapabilities)
+    _networksFlow.value = _networks.values.toList()
   }
 
   /**
@@ -64,7 +56,7 @@ internal class NetworksConnectivity(
 
     while (true) {
       val register = try {
-        manager.registerNetworkCallback(request, _networkCallback)
+        manager.registerNetworkCallback(request, this@NetworksConnectivity)
         true
       } catch (e: RuntimeException) {
         e.printStackTrace()
