@@ -102,12 +102,11 @@ internal abstract class BaseNetworkConnectivity(
       }
 
       val networkState = manager.currentNetworkState()
+      onRegisterCallbackResult(register, networkState)
 
       if (register) {
-        onRegisterCallbackResult(true, networkState)
         break
       } else {
-        onRegisterCallbackResult(false, networkState)
         delay(1_000)
         continue
       }
