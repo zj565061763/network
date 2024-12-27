@@ -4,6 +4,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -117,7 +118,7 @@ internal abstract class BaseNetworkConnectivity(
   protected abstract fun onRegisterCallbackResult(register: Boolean, networkState: NetworkState?)
 
   init {
-    @Suppress("OPT_IN_USAGE")
+    @OptIn(DelicateCoroutinesApi::class)
     GlobalScope.launch {
       registerNetworkCallback()
     }
