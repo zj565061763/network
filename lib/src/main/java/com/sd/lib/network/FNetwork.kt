@@ -3,7 +3,9 @@ package com.sd.lib.network
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -53,4 +55,11 @@ object FNetwork {
   fun getCurrentNetwork(): NetworkState {
     return _connectivityManager.currentNetworkState() ?: NetworkStateNone
   }
+}
+
+/** 如果无网络则[debounce]超时[timeoutMillis]毫秒 */
+@OptIn(FlowPreview::class)
+fun Flow<NetworkState>.debounceNoneNetwork(timeoutMillis: Long = 500): Flow<NetworkState> {
+  return debounce { if (it == NetworkStateNone) timeoutMillis else 0 }
+    .distinctUntilChanged()
 }
