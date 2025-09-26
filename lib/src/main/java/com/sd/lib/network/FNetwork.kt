@@ -13,11 +13,7 @@ import kotlinx.coroutines.flow.map
 object FNetwork {
   /** 监听网络是否已连接 */
   val isConnectedFlow: Flow<Boolean> by lazy {
-    _networksConnectivity.networksFlow
-      .map {
-        it.isNotEmpty()
-      }
-      .distinctUntilChanged()
+    allNetworksFlow.map { it.isNotEmpty() }.distinctUntilChanged()
   }
 
   /** 监听当前网络 */
