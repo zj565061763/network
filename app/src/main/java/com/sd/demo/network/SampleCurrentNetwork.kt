@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.sd.demo.network.theme.AppTheme
 import com.sd.lib.network.FNetwork
 import com.sd.lib.network.NetworkState
+import com.sd.lib.network.debounceNoneNetwork
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -39,9 +40,11 @@ class SampleCurrentNetwork : ComponentActivity() {
     if (checked) {
       _flowJob = lifecycleScope.launch {
         // 监听当前网络
-        FNetwork.currentNetworkFlow.collect { networkState ->
-          networkState.log()
-        }
+        FNetwork.currentNetworkFlow
+          .debounceNoneNetwork()
+          .collect { networkState ->
+            networkState.log()
+          }
       }
     }
   }
