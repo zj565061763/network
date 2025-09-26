@@ -28,7 +28,8 @@ object FNetwork {
   private val _allNetworks by lazy { NetworksConnectivity(_connectivityManager) }
 
   /**
-   * 默认在主进程自动初始化，如果要在其他进程使用，需要在其他进程手动初始化。
+   * 默认在主进程自动初始化[LibInitializer]，
+   * 如果要在其他进程使用，需要在其他进程手动初始化。
    */
   @JvmStatic
   fun init(context: Context) {
