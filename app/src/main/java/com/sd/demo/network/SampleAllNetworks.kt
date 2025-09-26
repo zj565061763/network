@@ -17,25 +17,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import com.sd.demo.network.theme.AppTheme
 import com.sd.lib.network.FNetwork
 import com.sd.lib.network.NetworkState
-import kotlinx.coroutines.launch
 
+/**
+ * 监听所有网络状态
+ */
 class SampleAllNetworks : ComponentActivity() {
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    lifecycleScope.launch {
-      // 监听所有网络
-      FNetwork.allNetworksFlow.collect { list ->
-        logMsg {
-          "size:${list.size}\n${list.joinToString(separator = "\n")}"
-        }
-      }
-    }
-
     setContent {
       AppTheme {
         ContentView()
@@ -48,7 +39,7 @@ class SampleAllNetworks : ComponentActivity() {
 private fun ContentView(
   modifier: Modifier = Modifier,
 ) {
-  val list by FNetwork.allNetworksFlow.collectAsStateWithLifecycle(emptyList())
+  val list by FNetwork.networksFlow.collectAsStateWithLifecycle(emptyList())
 
   LazyColumn(
     modifier = modifier.fillMaxSize(),

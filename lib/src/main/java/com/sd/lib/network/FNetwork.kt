@@ -11,17 +11,17 @@ import kotlinx.coroutines.flow.map
 
 @SuppressLint("StaticFieldLeak")
 object FNetwork {
-  /** 监听网络是否已连接 */
+  /** 网络是否已连接 */
   val isConnectedFlow: Flow<Boolean> by lazy {
-    allNetworksFlow.map { it.isNotEmpty() }.distinctUntilChanged()
+    networksFlow.map { it.isNotEmpty() }.distinctUntilChanged()
   }
 
-  /** 监听当前网络 */
-  val currentNetworkFlow: Flow<NetworkState>
+  /** 当前网络状态 */
+  val networkFlow: Flow<NetworkState>
     get() = _networkConnectivity.networkFlow
 
-  /** 监听所有网络 */
-  val allNetworksFlow: Flow<List<NetworkState>>
+  /** 所有网络状态 */
+  val networksFlow: Flow<List<NetworkState>>
     get() = _networksConnectivity.networksFlow
 
   @Volatile
@@ -46,9 +46,9 @@ object FNetwork {
     }
   }
 
-  /** 获取当前网络 */
+  /** 当前网络状态 */
   @JvmStatic
-  fun getCurrentNetwork(): NetworkState {
+  fun currentNetworkState(): NetworkState {
     return _connectivityManager.currentNetworkState() ?: NetworkStateNone
   }
 }

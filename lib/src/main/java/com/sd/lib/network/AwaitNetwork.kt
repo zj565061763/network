@@ -9,5 +9,5 @@ suspend fun awaitNetworkConnected() {
 
 /** 如果当前网络不满足[condition]，则挂起直到满足[condition] */
 suspend fun awaitNetwork(condition: (NetworkState) -> Boolean) {
-  FNetwork.currentNetworkFlow.first { condition(it) }
+  FNetwork.networkFlow.first { condition(it) }
 }
