@@ -29,7 +29,7 @@ internal class NetworkConnectivity(
         state
       }.distinctUntilChanged()
 
-  override fun onRegisterCallback() {
+  override fun onRegisterCallback(manager: ConnectivityManager) {
     manager.registerDefaultNetworkCallback(this)
   }
 
@@ -61,7 +61,7 @@ internal class NetworksConnectivity(
   val networksFlow: Flow<List<NetworkState>>
     get() = _networksFlow.filterNotNull()
 
-  override fun onRegisterCallback() {
+  override fun onRegisterCallback(manager: ConnectivityManager) {
     val request = NetworkRequest.Builder()
       .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
       .build()
@@ -89,13 +89,13 @@ internal class NetworksConnectivity(
 }
 
 internal abstract class BaseNetworkConnectivity(
-  protected val manager: ConnectivityManager,
+  private val manager: ConnectivityManager,
 ) : ConnectivityManager.NetworkCallback() {
 
   private suspend fun registerNetworkCallback() {
     while (true) {
       val register = try {
-        onRegisterCallback()
+        onRegisterCallback(manager)
         true
       } catch (e: RuntimeException) {
         e.printStackTrace()
@@ -114,7 +114,7 @@ internal abstract class BaseNetworkConnectivity(
     }
   }
 
-  protected abstract fun onRegisterCallback()
+  protected abstract fun onRegisterCallback(manager: ConnectivityManager)
   protected abstract fun onRegisterCallbackResult(register: Boolean, networkState: NetworkState?)
 
   init {
