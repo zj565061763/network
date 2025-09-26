@@ -22,8 +22,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SampleCurrentNetwork" />
-        <activity android:name=".SampleAllNetworks" />
+        <activity android:name=".SampleNetwork" />
+        <activity android:name=".SampleNetworks" />
         <activity android:name=".SampleWaitNetwork" />
 
     </application>

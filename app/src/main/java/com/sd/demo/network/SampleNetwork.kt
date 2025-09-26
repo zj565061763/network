@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 /**
  * 监听当前网络状态
  */
-class SampleCurrentNetwork : ComponentActivity() {
+class SampleNetwork : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     lifecycleScope.launch {

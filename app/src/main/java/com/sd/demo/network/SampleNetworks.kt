@@ -24,7 +24,7 @@ import com.sd.lib.network.NetworkState
 /**
  * 监听所有网络状态
  */
-class SampleAllNetworks : ComponentActivity() {
+class SampleNetworks : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {

@@ -26,8 +26,8 @@ class MainActivity : ComponentActivity() {
       AppTheme {
         Content(
           listActivity = listOf(
-            SampleCurrentNetwork::class.java,
-            SampleAllNetworks::class.java,
+            SampleNetwork::class.java,
+            SampleNetworks::class.java,
             SampleWaitNetwork::class.java,
           ),
           onClickActivity = {
