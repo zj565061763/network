@@ -139,6 +139,7 @@ private fun newNetworkState(
     netId = network.toString(),
     transportWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
     transportCellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
+    transportEthernet = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET),
     netCapabilityInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
   )
 }
