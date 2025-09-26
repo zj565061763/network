@@ -71,6 +71,7 @@ private fun NetworkState.log() {
   val wifiOrCellular = when {
     isWifi -> "Wifi"
     isCellular -> "Cellular"
+    isEthernet -> "Ethernet"
     else -> "None"
   }
   logMsg { "$wifiOrCellular $this" }

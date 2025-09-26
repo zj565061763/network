@@ -60,5 +60,5 @@ private fun Content(
 }
 
 inline fun logMsg(block: () -> String) {
-  Log.i("network-demo", block())
+  Log.i("sd-demo", block())
 }
